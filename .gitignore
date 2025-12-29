@@ -4,3 +4,8 @@ dist/
 *.log
 *.tmp
 /temp/*.log
+note.md
+/generated/prisma
+
+/generated/prisma
+init.sql
