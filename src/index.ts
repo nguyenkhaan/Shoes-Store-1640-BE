@@ -5,7 +5,6 @@ import router from '~/routes/router'
 const app = express() 
 
 // app.use(api) //Su dung router 
-console.log(router) 
 appConfig(app)
 app.use(router)
 app.use(cors({

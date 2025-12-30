@@ -1,14 +1,17 @@
 import prisma from "~/configs/mysqlPrisma.config"
-
-async function createUser(username : string , email : string , password : string) {
+import { generateHash } from "~/utlis/hash"
+//[Real User]
+async function verifyUser(userID : number , email : string) {
     try {
-        console.log('Dang khoi tao user')
-        const result = await prisma.user.create({
+        //Ham dung de bat verify cho nguoi dung 
+        const result = await prisma.user.update({
+            where: {
+                id: userID, email: email
+            }, 
             data: {
-                username , email , password
+                verify: true 
             }
         })
-        console.log('>>> Check result: ' , result) 
         return result 
     } 
     catch (err) 
@@ -16,6 +19,33 @@ async function createUser(username : string , email : string , password : string
         console.log(err); //Su dung cai nay de log loi 
         return null 
     }
-
 }
-export { createUser };
+
+
+
+
+
+//[Pending User] 
+async function createPendingUser(username: string , email : string , password: string) 
+{
+    try {
+        const hashPassword = await generateHash(password) 
+        if (!hashPassword) 
+            return false 
+        const result = await prisma.user.create({
+            data: {
+                email , username , password : hashPassword, verify: false //false la nguoi dung chua tien hanh verify
+            }
+        })
+        // console.log(' >>> Check thong tin nguoi dung: ' , result)   
+        return result
+    } 
+    catch (err) 
+    {
+        console.log(err) 
+        return null 
+    }
+}
+export { verifyUser , createPendingUser };
+//Document: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/mysql
+

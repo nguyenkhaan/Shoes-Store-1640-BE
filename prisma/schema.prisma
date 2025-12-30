@@ -20,4 +20,5 @@ model User {
   username String 
   password String 
   email String @unique
+  verify Boolean @default(false)
 }
