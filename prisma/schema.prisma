@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -14,4 +14,10 @@ datasource db {
 }
 model Tester {
   id Int @id @default(autoincrement())
+}
+model User {
+  id Int @id @default(autoincrement()) 
+  username String 
+  password String 
+  email String @unique
 }
