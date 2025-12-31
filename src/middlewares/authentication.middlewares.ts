@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { ENV } from "~/configs/env.config";
 import HttpStatus from "~/utlis/statusMap";
+//Hau het truong hop deu chi gui acceess token nen o day minh khong kiem tra refresh token nua 
 const credentials = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
