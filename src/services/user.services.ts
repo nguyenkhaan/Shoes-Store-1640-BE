@@ -1,30 +1,5 @@
 import prisma from "~/configs/mysqlPrisma.config"
 import { generateHash } from "~/utlis/hash"
-//[Real User]
-async function verifyUser(userID : number , email : string) {
-    try {
-        //Ham dung de bat verify cho nguoi dung 
-        const result = await prisma.user.update({
-            where: {
-                id: userID, email: email
-            }, 
-            data: {
-                verify: true 
-            }
-        })
-        return result 
-    } 
-    catch (err) 
-    {
-        console.log(err); //Su dung cai nay de log loi 
-        return null 
-    }
-}
-
-
-
-
-
 //[Pending User] 
 async function createPendingUser(username: string , email : string , password: string) 
 {
@@ -46,6 +21,44 @@ async function createPendingUser(username: string , email : string , password: s
         return null 
     }
 }
-export { verifyUser , createPendingUser };
+//[Active User]
+async function activeUser(userID : number , email : string) {
+    try {
+        const user = await prisma.user.findFirst({
+          where: { id: userID, email }  //Kiem tra xem user co ton tai khong 
+        })
+      
+        if (!user) return null
+      
+        return await prisma.user.update({
+          where: { id: userID },
+          data: { verify: true }
+        })
+      } catch (err) {
+        console.error(err)
+        throw err // hoặc return null tùy thiết kế API
+      }
+}
+
+//Find User By Email 
+async function findUserByEmail(email : string) 
+{
+    try {
+        const chk = await prisma.user.findFirst({
+            where: {
+                email
+            }
+        })
+        return chk 
+    } 
+    catch (err) {
+        console.log(err) 
+        return false 
+    }
+}
+//Get user By id 
+
+
+export { activeUser , createPendingUser , findUserByEmail };
 //Document: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/mysql
 
