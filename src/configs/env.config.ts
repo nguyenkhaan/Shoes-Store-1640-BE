@@ -10,6 +10,7 @@ const ENV = {
     DB_NAME: process.env.DB_NAME, 
     DB_USER: process.env.DB_USER, 
     DB_PASSWORD: process.env.DB_PASSWORD, 
-    DB_PORT: 3306 
+    DB_PORT: 3306, 
+    VERIFY_TOKEN_SECRET: process.env.VERIFY_TOKEN_SECRET 
 } 
 export {ENV}

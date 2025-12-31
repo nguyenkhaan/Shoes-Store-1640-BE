@@ -12,13 +12,126 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
 model Tester {
   id Int @id @default(autoincrement())
 }
+
 model User {
-  id Int @id @default(autoincrement()) 
-  username String 
-  password String 
-  email String @unique
-  verify Boolean @default(false)
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  phone     String
+  address   String
+  avatar    String     @default("https://www.svgrepo.com/show/452030/avatar-default.svg")
+  verify    Boolean    @default(false)
+  userRoles UserRole[]
+  carts     cart?
+  orders    Order[]
 }
+
+//Mot nguoi dung co nhieu gio hang
+model cart {
+  id     Int  @id @default(autoincrement())
+  userID Int  @unique
+  user   User @relation(fields: [userID], references: [id])
+}
+
+model Product {
+  id              Int              @id @default(autoincrement())
+  name            String
+  description     String
+  price           Decimal
+  active          Boolean
+  thumbnail       String
+  brand           Brand            @relation(fields: [brandID], references: [id])
+  brandID         Int
+  category        Category         @relation(fields: [categoryID], references: [id])
+  categoryID      Int
+  productVariants ProductVariant[]
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  user            User        @relation(fields: [userID], references: [id])
+  userID          Int
+  status          String
+  orderItems      OrderItem[]
+  shippingAddress String
+  createdAt       DateTime
+  payments        Payment?
+}
+
+model Payment {
+  id            Int    @id @default(autoincrement())
+  paymentMethod String
+  order         Order  @relation(fields: [orderID], references: [id])
+  orderID       Int    @unique
+}
+
+model OrderItem {
+  id               Int            @id @default(autoincrement())
+  quantity         Int
+  price            Decimal
+  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
+  productVariantID Int
+  order            Order          @relation(fields: [orderID], references: [id])
+  orderID          Int
+}
+
+model ProductVariant {
+  id         Int         @id @default(autoincrement())
+  product    Product     @relation(fields: [productID], references: [id])
+  productID  Int
+  size       Size        @relation(fields: [sizeID], references: [id])
+  sizeID     Int
+  color      Color       @relation(fields: [colorID], references: [id])
+  colorID    Int
+  quantity   Int
+  orderItems OrderItem[]
+}
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+}
+
+model Color {
+  id              Int              @id @default(autoincrement())
+  name            String
+  hex             String
+  productVariants ProductVariant[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  description String
+  products    Product[]
+}
+
+model Size {
+  id              Int              @id @default(autoincrement())
+  name            String
+  productVariants ProductVariant[]
+}
+
+model Role {
+  id        Int        @id
+  role      String
+  userRoles UserRole[]
+}
+
+model UserRole {
+  userID Int
+  roleID Int
+  user   User @relation(fields: [userID], references: [id])
+  role   Role @relation(fields: [roleID], references: [id])
+
+  @@id([userID, roleID])
+}
+
+//Sua full endpoint register  verify user theo database roi code tiep 
+//Token se chua thong tin xac thuc gom: userID , email (OK) 
+//Fix bang role : prisma seed data , userROle 

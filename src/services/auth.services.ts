@@ -3,13 +3,14 @@ import {
     activeUser,
     findUserByEmail,
 } from "~/services/user.services";
-import { decodeToken, encodeToken } from "~/services/jwt.services";
+import { decodeToken, encodeToken , createVerifyToken } from "~/services/jwt.services";
 
 import HttpStatus from "~/utlis/statusMap";
 async function registerUser(data: any) {
     try {
-        const { username, email, password } = data;
-        if (!username || !email || !password)
+        //name , email , avatar , password , phone , address , avatar
+        const {email , password} = data 
+        if (!email || !password)
             return {
                 message: "Missing information",
                 success: false,
@@ -23,17 +24,10 @@ async function registerUser(data: any) {
                 success: false, 
                 httpStatus: HttpStatus.CONFLICT 
             }
-
-        const pendingUser = await createPendingUser(username, email, password);
+        //Create pending user 
+        const pendingUser = await createPendingUser(data);
         if (pendingUser) {
-            const access_token = await encodeToken(
-                {
-                    userID: pendingUser.id,
-                    email: pendingUser.email,
-                    purpose: "email-verify",
-                },
-                "access"
-            );
+            const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 
             return {
                 message:
                     "Register successfully. Please check your email for verify",
@@ -55,7 +49,7 @@ async function registerUser(data: any) {
 
 async function verifyUser(token: string) {
     try {
-        const result = decodeToken(token, "access", "email-verify");
+        const result = decodeToken(token, "verify" ,"email-verify");
         if (result == 0)
             return {
                 success: false,
@@ -93,3 +87,24 @@ async function verifyUser(token: string) {
 }
 
 export { registerUser, verifyUser };
+
+
+
+
+
+/*  
+id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  phone     String
+  address   String
+  avatar    String     @default("https://www.svgrepo.com/show/452030/avatar-default.svg")
+  verify    Boolean    @default(false)
+  userRoles UserRole[]
+  carts     cart?
+  orders    Order[]
+
+
+
+*/ 

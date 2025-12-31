@@ -5,32 +5,34 @@ import { registerUser, verifyUser } from "~/services/auth.services";
 import HttpStatus from "~/utlis/statusMap";
 class Auth {
     static async register(req: Request, res: Response) {
-        const responseData = await registerUser(req.body) 
-        if (responseData) 
-            return res.status(responseData.httpStatus).json(responseData) 
-        return res.status(HttpStatus.INTERNAL).json({}) 
+        const responseData = await registerUser(req.body);
+        if (responseData)
+            return res.status(responseData.httpStatus).json(responseData);
+        return res
+            .status(HttpStatus.INTERNAL)
+            .json({ success: false, message: "Internal Server Error" });
     }
-
-    static async verify(req: Request, res: Response) 
-    {
+    
+    static async verify(req: Request, res: Response) {
         //Ham nay moi tien hanh luu nguoi dung xuong database
         const token = req.query.token as string;
         if (!token)
             return res
                 .status(400)
                 .json({ success: false, message: "Missing token" });
-        const responseData = await verifyUser(token) 
-        if (responseData) 
-            return res.status(responseData.httpStatus).json(responseData) 
-        return res.status(HttpStatus.INTERNAL).json({}) 
-    } 
-    static async login(req : Request , res : Response) 
-    {
-
+        const responseData = await verifyUser(token);
+        if (responseData)
+            return res.status(responseData.httpStatus).json(responseData);
+        return res
+            .status(HttpStatus.INTERNAL)
+            .json({ success: false, message: "Internal Server Error" });
     }
-    static async loginGoogle(req : Request , res : Response) 
-    {
-        
+    static async ResendVerify(req: Request, res: Response) {
+        // Tien hanh gui lai api end point
     }
+    static async login(req: Request, res: Response) {}
+    static async loginGoogle(req: Request, res: Response) {}
 }
 export { Auth };
+
+//Tao refresh token thi bat buoc phai co roles de xac dinh quyen cua nguoi dung
