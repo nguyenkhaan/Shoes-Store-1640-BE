@@ -4,19 +4,20 @@ import { ENV } from "~/configs/env.config";
 //GET SCRECT-KEY
 type TokenType = "access" | "refresh" | "verify";
 type TokenPurpose = "login" | "refresh" | "email-verify";   //Muc dich cu token la lam nhiem vu gi ? 
-function getTokenSecretKeyByType(type: TokenType) {
+function getTokenSecretKeyByType(type: TokenType) {  //Truyen type vao de nhan lai secret key 
     switch (type) {
         case "verify":
             return ENV.VERIFY_TOKEN_SECRET as string; //Verify user
         case "access":
             return ENV.ACCESS_TOKEN_SECRET as string; //Access token
         case "refresh":
-            return ENV.REFRESH_TOKEN_SECRET as string; //refresh Token
+            return ENV.REFRESH_TOKEN_SECRET as string; //refresh Token 
     }
     return ENV.ACCESS_TOKEN_SECRET as string;
 }
 
-function createVerifyToken(id: number , email: string) {
+function createVerifyToken(id: number , email: string) 
+{
     const token = jwt.sign(
         { userID: id , email, purpose: "email-verify" },
         ENV.VERIFY_TOKEN_SECRET as string,
@@ -27,7 +28,8 @@ function createVerifyToken(id: number , email: string) {
     return token;
 }
 
-function encodeToken(payload: object) {
+function encodeToken(payload: object) //Nhan vao du lieu va dong goi du lieu do thanh jwt token 
+{  //Ben login nho them roles do 
     //Tien hanh tao token va gui lai cho nguoi dung ?
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET;
     const refresh_secret_key = ENV.REFRESH_TOKEN_SECRET;
@@ -39,7 +41,9 @@ function encodeToken(payload: object) {
     });
     return [access_token, refresh_token];
 }
-function decodeToken(token: string, type: TokenType, expectedPurpose: string) {
+
+function decodeToken(token: string, type: TokenType, expectedPurpose: string) //Nhan vao token va tien hanh giai ma token do 
+{
     //Tien hanh giai SECRET token
     //Nhan vao 1 token va giai du lieu ra
     try {

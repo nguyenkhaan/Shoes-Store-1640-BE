@@ -31,7 +31,7 @@ model User {
   orders    Order[]
 }
 
-//Mot nguoi dung co nhieu gio hang
+//Mot nguoi dung co nhieu gio hang, userID, productID, id, userID , userId
 model cart {
   id     Int  @id @default(autoincrement())
   userID Int  @unique

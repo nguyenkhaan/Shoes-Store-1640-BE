@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt' 
 const salt = 5
-async function generateHash(str : string) 
+async function generateHash(str : string) //Hash password 
 {
     try {
         let result = await bcrypt.hash(str , salt) 

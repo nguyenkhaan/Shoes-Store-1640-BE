@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import HttpStatus from "~/utlis/statusMap";
 type Role = "Admin" | "User";
-function verifyRole(accessNeededRoles: Role[]) {
+function verifyRole(accessNeededRoles: Role[]) 
+{
     const authorization = (req: Request, res: Response, next: NextFunction) => {
         if (!req.user)
             return res

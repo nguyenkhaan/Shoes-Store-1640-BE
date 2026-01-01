@@ -6,6 +6,11 @@ import {
 import { decodeToken, encodeToken , createVerifyToken } from "~/services/jwt.services";
 
 import HttpStatus from "~/utlis/statusMap";
+import { compareHash } from "~/utlis/hash";
+import { UserDTO } from "~/types/UserDTO";
+import { findRoles } from "~/services/role.services";
+import prisma from "~/configs/mysqlPrisma.config"
+
 async function registerUser(data: any) {
     try {
         //name , email , avatar , password , phone , address , avatar
@@ -86,7 +91,37 @@ async function verifyUser(token: string) {
     }
 }
 
-export { registerUser, verifyUser };
+async function loginUser(userID : number , email : string , password : string) 
+{
+    const hashedPassword = await prisma.user.findFirst({
+        where: {id : userID}, 
+        select: {
+            password: true 
+        }
+    })
+    const isPassword = compareHash(password , hashedPassword?.password as string) 
+    if (!isPassword) 
+        return {
+            success: false, 
+            httpStatus: HttpStatus.UNAUTHORIZED, 
+            message: "Wrong password" 
+        } 
+    const roles = await findRoles(userID) //Tim kiem cac roles cua nguoi dung 
+    console.log('>>> Check find Roles: ' , roles , 'userID: ' , userID)
+    const [access_token , refresh_token] = encodeToken({
+        userID , email, roles   //Tao token voi cac roles duoc tim kiem trong bang 
+    })  
+    return {
+        success: true, 
+        httpStatus: HttpStatus.OK, 
+        message: "Login successfully", 
+        accessToken: access_token, 
+        refreshToken: refresh_token
+    }
+
+}
+export { registerUser, verifyUser , loginUser };
+//Mot luc sau phai khoi tao khoan danh rieng cho Admin ben file seed.ts 
 
 
 

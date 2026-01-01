@@ -4,7 +4,7 @@
     // File Layout
     // "rootDir": "./src",
     "outDir": "./dist",
-    "typeRoots": ["./src/types"],  //Dat cai nay vao de extend types 
+    "typeRoots": ["./src/types" , "./node_module/@types",],  //Dat cai nay vao de extend types 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
@@ -45,5 +45,6 @@
     "paths": {
        "~/*": ["src/*"]
     }, 
-  }
+  
+  } 
 }

@@ -1,10 +1,26 @@
 import { Router } from "express";
 import { Auth } from "~/controllers/auth.controller";
-const router = Router() 
-router.post('/register' , Auth.register)
-router.get('/verify' , Auth.verify)
-// router.get('/resend-verify' , )
-export default router 
+import { requireFields } from "~/middlewares/requiredField.middlewares";
+import credentials from "~/middlewares/authentication.middlewares"; //Authentication // Co req.user
+import { verifyRole } from "~/middlewares/authorization.middlewares"; //Authorization
+import { checkUserStatusByEmail } from "~/middlewares/active.middlewares";
+const router = Router();
 
+router.post(
+    "/register",
+    requireFields(["name", "email", "password", "phone", "address"]),
+    Auth.register
+); //Bat buoc phai gui cac truong nay de tien hanh dang ki
+
+router.get("/verify", Auth.verify);
+
+router.post(
+    "/login",
+    requireFields(["email", "password"]),  //midleware_1 : Bat nguoi dung phai truyen du email va password
+    checkUserStatusByEmail(), //middleware_2 : Kiem tra nguoi dung da xac thuc bang email chua ? 
+    Auth.login
+);
+// router.get('/resend-verify' , )
+export default router;
 
 //{name , email , password}
