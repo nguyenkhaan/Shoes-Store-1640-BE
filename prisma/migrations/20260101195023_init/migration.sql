@@ -10,10 +10,10 @@ CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
-    `phone` VARCHAR(191) NOT NULL,
-    `address` VARCHAR(191) NOT NULL,
-    `avatar` VARCHAR(191) NOT NULL DEFAULT 'https://www.svgrepo.com/show/452030/avatar-default.svg',
+    `password` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `avatar` VARCHAR(191) NULL DEFAULT 'https://www.svgrepo.com/show/452030/avatar-default.svg',
     `verify` BOOLEAN NOT NULL DEFAULT false,
 
     UNIQUE INDEX `User_email_key`(`email`),
@@ -38,7 +38,6 @@ CREATE TABLE `Product` (
     `active` BOOLEAN NOT NULL,
     `thumbnail` VARCHAR(191) NOT NULL,
     `brandID` INTEGER NOT NULL,
-    `categoryID` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -104,14 +103,6 @@ CREATE TABLE `Color` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Category` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `description` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `Size` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
@@ -140,9 +131,6 @@ ALTER TABLE `cart` ADD CONSTRAINT `cart_userID_fkey` FOREIGN KEY (`userID`) REFE
 
 -- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_brandID_fkey` FOREIGN KEY (`brandID`) REFERENCES `Brand`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Product` ADD CONSTRAINT `Product_categoryID_fkey` FOREIGN KEY (`categoryID`) REFERENCES `Category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

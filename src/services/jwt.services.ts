@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { ENV } from "~/configs/env.config";
-
+import { OAuth2Client } from "google-auth-library";
 //GET SCRECT-KEY
 type TokenType = "access" | "refresh" | "verify";
 type TokenPurpose = "login" | "refresh" | "email-verify";   //Muc dich cu token la lam nhiem vu gi ? 
@@ -33,15 +33,22 @@ function encodeToken(payload: object) //Nhan vao du lieu va dong goi du lieu do 
     //Tien hanh tao token va gui lai cho nguoi dung ?
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET;
     const refresh_secret_key = ENV.REFRESH_TOKEN_SECRET;
-    const access_token = jwt.sign(payload, access_secret_key as string, {
+    const access_token = jwt.sign({...payload , purpose : 'login'}, access_secret_key as string, {
         expiresIn: 24 * 3600 * 3,
     });
-    const refresh_token = jwt.sign(payload, refresh_secret_key as string, {
+    const refresh_token = jwt.sign({...payload , purpose : 'refresh'}, refresh_secret_key as string, {
         expiresIn: 24 * 3600 * 30, //Refresh token het han thi bat user phai dang nhap lai
     });
     return [access_token, refresh_token];
 }
-
+function makeAccessToken(payload : object) 
+{
+    const access_secret_key = ENV.ACCESS_TOKEN_SECRET as string 
+    const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
+        expiresIn: 24 * 3600 * 3 
+    }) 
+    return access_token
+}
 function decodeToken(token: string, type: TokenType, expectedPurpose: string) //Nhan vao token va tien hanh giai ma token do 
 {
     //Tien hanh giai SECRET token
@@ -59,5 +66,16 @@ function decodeToken(token: string, type: TokenType, expectedPurpose: string) //
         if (err.name == "TokenExpiredError") return -1; // The token has been expired
         return 0;
     }
+} 
+
+async function decodeGoogleToken(token : string) 
+{
+    const client = new OAuth2Client(ENV.OATH_CLIENT_ID) 
+    const ticket = await client.verifyIdToken({
+        idToken: token, 
+        audience: ENV.OATH_CLIENT_ID as string 
+    }) 
+    const payload = ticket.getPayload() 
+    return payload 
 }
-export { encodeToken, decodeToken, createVerifyToken };
+export { encodeToken, decodeToken, createVerifyToken , makeAccessToken , decodeGoogleToken };

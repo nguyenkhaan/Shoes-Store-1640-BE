@@ -11,7 +11,11 @@ const ENV = {
     DB_USER: process.env.DB_USER, 
     DB_PASSWORD: process.env.DB_PASSWORD, 
     DB_PORT: 3306, 
-    VERIFY_TOKEN_SECRET: process.env.VERIFY_TOKEN_SECRET //Key dung de giai ma refresh jwt token 
+    VERIFY_TOKEN_SECRET: process.env.VERIFY_TOKEN_SECRET, //Key dung de giai ma refresh jwt token 
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD, 
+    FE: process.env.FE, 
+    OATH_CLIENT_ID: process.env.OATH_CLIENT_ID, 
+    OATH_CLIENT_SECRET: process.env.OATH_CLIENT_SECRET 
 } 
 export {ENV}
 

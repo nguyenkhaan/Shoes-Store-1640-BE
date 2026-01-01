@@ -7,7 +7,7 @@ async function createPendingUser(payload : UserDTO)
 {
     try {
         const password = payload.password 
-        const hashPassword = await generateHash(password) 
+        const hashPassword = await generateHash(password as string) 
         if (!hashPassword) 
             return false 
         const result = await prisma.user.create({
@@ -45,7 +45,21 @@ async function activeUser(userID : number , email : string) {
         throw err // hoặc return null tùy thiết kế API
       }
 }
-
+async function createUser(payload : UserDTO) 
+{
+    try {
+        const user = await prisma.user.create({
+            data: {
+                ...payload , verify: true 
+            }
+        }) 
+        return user 
+    } 
+    catch (err) {
+        console.log(err) 
+        return null 
+    }
+}
 //Find User By Email 
 async function findUserByEmail(email : string) 
 {
@@ -65,6 +79,6 @@ async function findUserByEmail(email : string)
 //Get user By id 
 
 
-export { activeUser , createPendingUser , findUserByEmail };
+export { activeUser , createPendingUser , findUserByEmail , createUser };
 //Document: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/mysql
 

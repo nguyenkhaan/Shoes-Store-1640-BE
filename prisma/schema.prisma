@@ -21,10 +21,10 @@ model User {
   id        Int        @id @default(autoincrement())
   name      String
   email     String     @unique
-  password  String
-  phone     String
-  address   String
-  avatar    String     @default("https://www.svgrepo.com/show/452030/avatar-default.svg")
+  password  String?
+  phone     String?
+  address   String?
+  avatar    String?    @default("https://www.svgrepo.com/show/452030/avatar-default.svg")
   verify    Boolean    @default(false)
   userRoles UserRole[]
   carts     cart?
@@ -47,8 +47,6 @@ model Product {
   thumbnail       String
   brand           Brand            @relation(fields: [brandID], references: [id])
   brandID         Int
-  category        Category         @relation(fields: [categoryID], references: [id])
-  categoryID      Int
   productVariants ProductVariant[]
 }
 
@@ -103,12 +101,6 @@ model Color {
   name            String
   hex             String
   productVariants ProductVariant[]
-}
-
-model Category {
-  id          Int       @id @default(autoincrement())
-  description String
-  products    Product[]
 }
 
 model Size {

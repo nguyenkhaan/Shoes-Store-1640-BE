@@ -21,7 +21,7 @@ const verifyRefreshToken = (
             token,
             ENV.REFRESH_TOKEN_SECRET as string
         ) as JwtPayload;
-        req.user = payload;
+        req.user = payload;  //Luu tru thong tin nguoi dung vao req.user 
         next();
     } catch (err: any) {
         return res.status(HttpStatus.UNAUTHORIZED).json({

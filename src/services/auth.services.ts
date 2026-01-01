@@ -2,15 +2,16 @@ import {
     createPendingUser,
     activeUser,
     findUserByEmail,
+    createUser,
 } from "~/services/user.services";
-import { decodeToken, encodeToken , createVerifyToken } from "~/services/jwt.services";
+import { decodeToken, encodeToken , createVerifyToken, makeAccessToken , decodeGoogleToken } from "~/services/jwt.services";
 
 import HttpStatus from "~/utlis/statusMap";
 import { compareHash } from "~/utlis/hash";
 import { UserDTO } from "~/types/UserDTO";
 import { findRoles } from "~/services/role.services";
 import prisma from "~/configs/mysqlPrisma.config"
-
+import { ENV } from "~/configs/env.config";
 async function registerUser(data: any) {
     try {
         //name , email , avatar , password , phone , address , avatar
@@ -29,7 +30,7 @@ async function registerUser(data: any) {
                 success: false, 
                 httpStatus: HttpStatus.CONFLICT 
             }
-        //Create pending user 
+        //Create pending user v
         const pendingUser = await createPendingUser(data);
         if (pendingUser) {
             const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 
@@ -107,9 +108,9 @@ async function loginUser(userID : number , email : string , password : string)
             message: "Wrong password" 
         } 
     const roles = await findRoles(userID) //Tim kiem cac roles cua nguoi dung 
-    console.log('>>> Check find Roles: ' , roles , 'userID: ' , userID)
+    // console.log('>>> Check find Roles: ' , roles , 'userID: ' , userID)
     const [access_token , refresh_token] = encodeToken({
-        userID , email, roles   //Tao token voi cac roles duoc tim kiem trong bang 
+        userID , email, roles  //Tao token voi cac roles duoc tim kiem trong bang 
     })  
     return {
         success: true, 
@@ -120,8 +121,102 @@ async function loginUser(userID : number , email : string , password : string)
     }
 
 }
-export { registerUser, verifyUser , loginUser };
-//Mot luc sau phai khoi tao khoan danh rieng cho Admin ben file seed.ts 
+
+async function refreshAccessToken(userID : number , email : string) 
+{
+    const roles = await findRoles(userID) 
+    const access_token = makeAccessToken({
+        userID , email , roles
+    }) 
+    return {
+        success: true, 
+        message : "New Access Token Created", 
+        httpStatus: HttpStatus.OK, 
+        accessToken : access_token
+    }
+}
+
+async function getGoogleToken(code: string) {
+    const url = "https://oauth2.googleapis.com/token";
+
+    const body = new URLSearchParams({
+        code,
+        client_id: ENV.OATH_CLIENT_ID as string,
+        client_secret: ENV.OATH_CLIENT_SECRET as string,
+        redirect_uri: ENV.FE ?? "",
+        grant_type: "authorization_code",
+    });
+    const r = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(),
+    });
+
+    if (!r.ok) {
+        console.error("Google token error:", await r.text());
+        return null;
+    }
+
+    const response = await r.json();
+    return response;
+}
+
+async function loginGoogle(code: string) {
+    const tokenData = await getGoogleToken(code);
+
+    if (!tokenData?.id_token) {
+        return {
+            success: false,
+            message: "Invalid Google code",
+            httpStatus: HttpStatus.BAD_REQUEST,
+        };
+    }
+    const payload = await decodeGoogleToken(tokenData.id_token);
+
+    if (!payload || !payload.email_verified || !payload.sub) {
+        return {
+            success: false,
+            message: "Google authentication failed",
+            httpStatus: HttpStatus.BAD_REQUEST,
+        };
+    }
+
+    const { email, name, picture } = payload;
+
+    // 3. Tìm user theo googleSub
+    let user = await prisma.user.findUnique({
+        where: { email : email as string}
+    });
+
+    // 4. Nếu chưa có  tạo user mới
+    if (!user) {
+        user = await createUser({
+            name : name as string , email : email as string,  
+            avatar : picture as string 
+        })
+    }
+    if (!user) 
+        return {
+            success: false, 
+            message : "Internal Server Error", 
+            httpStatus : HttpStatus.INTERNAL
+        }
+    const roles = findRoles(user.id) 
+    const [refresh_token , access_token] = encodeToken({
+        email , name , roles 
+    })
+    return {
+        success: true,
+        accessToken : access_token, 
+        refreshToken : refresh_token, 
+        httpStatus: HttpStatus.OK,
+    };
+}
+
+
+export { registerUser, verifyUser , loginUser , refreshAccessToken , loginGoogle };
 
 
 
