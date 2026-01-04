@@ -40,5 +40,15 @@ class Validation
             }) 
         next()  
     }
+    static numberIDParam(req : Request , res : Response , next : NextFunction)   //Dung de kiem tra id tren params 
+    {
+        const id = Number(req.params.id) 
+        if (!Number.isInteger(id)) 
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false, 
+                message: 'Invalid id, must be a number'
+            })
+        next() 
+    }
 }
 export default Validation

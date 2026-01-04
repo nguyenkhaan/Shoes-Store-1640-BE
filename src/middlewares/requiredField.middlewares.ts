@@ -3,6 +3,11 @@ import HttpStatus from "~/utlis/statusMap";
 //Kien thuc ve interface ve enum
 function requireFields(fields: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
+        if (!req.body) 
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: "false", 
+                message: "Missing body" 
+            }) 
         const missingFields = fields.filter(
             (field) => req.body[field] === undefined || req.body[field] === null
         );
