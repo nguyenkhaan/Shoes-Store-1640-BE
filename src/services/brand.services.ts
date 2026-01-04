@@ -104,4 +104,37 @@ async function updateBrandByID(id: number, name: string) {
         };
     }
 }
-export { createBrand, getBrands, getBrandById, updateBrandByID };
+
+async function deleteBrandByID(id: number) {
+    try {
+        const existingBrand = await prisma.brand.findUnique({
+            where: { id },
+        });
+
+        if (!existingBrand) {
+            return {
+                success: false,
+                message: "Brand not found",
+                httpStatus: HttpStatus.NOT_FOUND,
+            };
+        }
+
+        await prisma.brand.delete({
+            where: { id },
+        });
+
+        return {
+            success: true,
+            message: "Brand deleted successfully",
+            httpStatus: HttpStatus.OK,
+        };
+    } catch (error) {
+        console.error(">>> Delete brand error:", error);
+        return {
+            success: false,
+            message: "Delete brand failed",
+            httpStatus: HttpStatus.INTERNAL,
+        };
+    }
+}
+export { createBrand, getBrands, getBrandById, updateBrandByID , deleteBrandByID };

@@ -1,6 +1,6 @@
 //Cai nay dung de tao moi brand 
 import { Request , response, Response } from "express";
-import { createBrand , getBrands , getBrandById , updateBrandByID } from "~/services/brand.services";
+import { createBrand , getBrands , getBrandById , updateBrandByID , deleteBrandByID } from "~/services/brand.services";
 import HttpStatus from "~/utlis/statusMap";
 class Brand 
 {
@@ -47,7 +47,13 @@ class Brand
     }
     static async deleteBrand(req : Request , res : Response) 
     {
-        
+        const id = Number(req.params.id)
+        const responseData = await deleteBrandByID(id)
+        if (responseData) 
+            return res.status(responseData.httpStatus).json(responseData) 
+        return res
+        .status(HttpStatus.INTERNAL)
+        .json({ success: false, message: "Internal Server Error" });
     }
 }
 export default Brand 
