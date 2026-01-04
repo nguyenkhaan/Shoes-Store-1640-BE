@@ -1,20 +1,22 @@
 import { ENV } from "../src/configs/env.config"
 import prisma from "../src/configs/mysqlPrisma.config"
+import {generateHash} from "../src/utlis/hash"
 async function main() 
 {
-    await prisma.role.createMany({
-        data: [
-            {role: "Admin" , id: 1810}, 
-            {role : "User" , id : 1901}
-        ]
-    })
+    // await prisma.role.createMany({
+    //     data: [
+    //         {role: "Admin" , id: 1810}, 
+    //         {role : "User" , id : 1901}
+    //     ]
+    // })
+    const hashedAdminPassword = await generateHash(ENV.ADMIN_PASSWORD as string); 
     const admin = await prisma.user.create({
       data : {
-        id: 0, 
+        // id: 0, 
         name: 'admin', 
         address: 'uit', 
-        email: 'admin', 
-        password: ENV.DB_PASSWORD as string, 
+        email: ENV.ADMIN_EMAIL as string, 
+        password: hashedAdminPassword, 
         phone: '0', 
         verify: true 
       }
@@ -30,6 +32,24 @@ async function main()
       data : {
         userID: admin.id, 
         roleID: 1901 
+      }
+    })
+    //Tao them 1 user teseter 
+    const hashedTesterPassword = await generateHash(ENV.TESTER_PASSWORD as string);  
+    const tester = await prisma.user.create({
+      data : {
+        name : 'tester', 
+        address: 'uit', 
+        email: ENV.TESTER_EMAIL as string,
+        phone: '0', 
+        verify: true, 
+        password: hashedTesterPassword 
+      } 
+    })
+    await prisma.userRole.create({
+      data: {
+        userID : tester.id, 
+        roleID: 1901 //Vai tro la tester 
       }
     })
 }

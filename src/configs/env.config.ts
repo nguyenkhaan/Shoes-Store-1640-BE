@@ -15,7 +15,10 @@ const ENV = {
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD, 
     FE: process.env.FE, 
     OATH_CLIENT_ID: process.env.OATH_CLIENT_ID, 
-    OATH_CLIENT_SECRET: process.env.OATH_CLIENT_SECRET 
+    OATH_CLIENT_SECRET: process.env.OATH_CLIENT_SECRET, 
+    TESTER_PASSWORD: process.env.TESTER_PASSWORD, 
+    TESTER_EMAIL: process.env.TESTER_EMAIL, 
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL, 
 } 
 export {ENV}
 
