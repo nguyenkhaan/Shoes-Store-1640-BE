@@ -27,12 +27,12 @@ model User {
   avatar    String?    @default("https://www.svgrepo.com/show/452030/avatar-default.svg")
   verify    Boolean    @default(false)
   userRoles UserRole[]
-  carts     cart?
+  carts     Cart?
   orders    Order[]
 }
 
 //Mot nguoi dung co nhieu gio hang, userID, productID, id, userID , userId
-model cart {
+model Cart {
   id     Int  @id @default(autoincrement())
   userID Int  @unique
   user   User @relation(fields: [userID], references: [id])
