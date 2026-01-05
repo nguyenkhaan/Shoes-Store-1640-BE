@@ -5,8 +5,6 @@ import Validation from "~/middlewares/validation.middlewares";
 const router = Router();
 
 router.post("/brands",  requireFields(["name"]) ,  Brand.createBrand);
-router.get('/brands' , Brand.getAllBrands);  
-router.get('/brands/:id' , Validation.numberIDParam ,  Brand.getBrandByID)
 router.put('/brands/:id' , Validation.numberIDParam , requireFields(["name"])  , Brand.updateBrand) 
 router.delete('/brands/:id' , Validation.numberIDParam , Brand.deleteBrand)
 export default router;

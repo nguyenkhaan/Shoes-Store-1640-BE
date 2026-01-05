@@ -3,7 +3,7 @@ import prisma from "../src/configs/mysqlPrisma.config"
 import {generateHash} from "../src/utlis/hash"
 async function main() 
 {
-  /*
+  
     await prisma.role.createMany({
         data: [
             {role: "Admin" , id: 1810}, 
@@ -52,7 +52,7 @@ async function main()
         userID : tester.id, 
         roleID: 1901 //Vai tro la tester 
       }
-    }) */  
+    }) 
    //Ham dung de tao nhanh kich thuoc 
       const MIN_SIZE = 20;
       const MAX_SIZE = 42;
