@@ -8,5 +8,5 @@ router.post("/colors",  requireFields(["name" , "hex"]) ,  Color.createColor);
 router.get('/colors' , Color.getAllColors);  
 router.get('/colors/:id' , Validation.numberIDParam ,  Color.getColorByID)
 router.put('/colors/:id' , Validation.numberIDParam , requireFields(["name" , "hex"])  , Color.updateColorByID) 
-router.delete('/brands/:id' , Validation.numberIDParam , Color.deleteColorByID)
+router.delete('/colors/:id' , Validation.numberIDParam , Color.deleteColorByID)
 export default router;

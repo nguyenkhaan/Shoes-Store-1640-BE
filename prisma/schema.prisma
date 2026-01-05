@@ -44,7 +44,7 @@ model Product {
   description     String
   price           Decimal
   active          Boolean
-  thumbnail       String
+  thumbnail       String           @default("https://static.thenounproject.com/png/5191452-200.png")
   brand           Brand            @relation(fields: [brandID], references: [id])
   brandID         Int
   productVariants ProductVariant[]
@@ -105,7 +105,7 @@ model Color {
 
 model Size {
   id              Int              @id @default(autoincrement())
-  name            String
+  value           Int
   productVariants ProductVariant[]
 }
 
