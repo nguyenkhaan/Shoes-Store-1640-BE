@@ -6,6 +6,7 @@ const ENV = {
     URL: process.env.URL || 'http://localhost:6869',
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET , //Key dung de giai ma access jwt token 
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET, //Key dung de giai ma refresh token 
+    RESET_PASSWORD_TOKEN_SECRET: process.env.RESET_PASSWORD_TOKEN_SECRET, 
     HOST: process.env.HOST, 
     DB_NAME: process.env.DB_NAME, 
     DB_USER: process.env.DB_USER, 

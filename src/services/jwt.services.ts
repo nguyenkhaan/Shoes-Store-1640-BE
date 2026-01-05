@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { ENV } from "~/configs/env.config";
 import { OAuth2Client } from "google-auth-library";
 //GET SCRECT-KEY
-type TokenType = "access" | "refresh" | "verify";
-type TokenPurpose = "login" | "refresh" | "email-verify";   //Muc dich cu token la lam nhiem vu gi ? 
+type TokenType = "access" | "refresh" | "verify"|"reset-password";
+type TokenPurpose = "login" | "refresh" | "email-verify"|"reset-password";   //Muc dich cu token la lam nhiem vu gi ? 
 function getTokenSecretKeyByType(type: TokenType) {  //Truyen type vao de nhan lai secret key 
     switch (type) {
         case "verify":
@@ -49,6 +49,14 @@ function makeAccessToken(payload : object)
     }) 
     return access_token
 }
+function makeResetPasswordToken(payload : object) 
+{
+    const reset_password_secret_key = ENV.RESET_PASSWORD_TOKEN_SECRET as string 
+    const token = jwt.sign({...payload , purpose : 'reset-password'} , reset_password_secret_key , {
+        expiresIn: 5 * 60 //5 phut 
+    }) 
+    return token 
+}
 function decodeToken(token: string, type: TokenType, expectedPurpose: string) //Nhan vao token va tien hanh giai ma token do 
 {
     //Tien hanh giai SECRET token
@@ -78,4 +86,4 @@ async function decodeGoogleToken(token : string)
     const payload = ticket.getPayload() 
     return payload 
 }
-export { encodeToken, decodeToken, createVerifyToken , makeAccessToken , decodeGoogleToken };
+export { encodeToken, decodeToken, createVerifyToken , makeAccessToken , decodeGoogleToken , makeResetPasswordToken };

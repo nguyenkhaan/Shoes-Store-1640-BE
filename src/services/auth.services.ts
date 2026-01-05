@@ -100,7 +100,8 @@ async function loginUser(userID : number , email : string , password : string)
             password: true 
         }
     })
-    const isPassword = compareHash(password , hashedPassword?.password as string) 
+    console.log('>>useloginID: ' , userID , ' user email ' , email , ' password ' , password)
+    const isPassword = await compareHash(password , hashedPassword?.password as string) 
     if (!isPassword) 
         return {
             success: false, 

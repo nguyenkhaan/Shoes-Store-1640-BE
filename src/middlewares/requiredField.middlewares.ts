@@ -17,7 +17,6 @@ function requireFields(fields: string[]) {
                 message: `Missing required fields: ${missingFields.join(", ")}`,
             });
         }
-
         next();
     };
 }

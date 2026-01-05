@@ -33,7 +33,7 @@ class Auth
             .json({ success: false, message: "Internal Server Error" });
     }
     static async ResendVerify(req: Request, res: Response) {
-        // Tien hanh gui lai api end point
+        // Tien hanh gui lai api end point, gui lai duong link kich hoat qua email 
     }
     static async login(req: Request, res: Response) {
         // Phia truoc phai dung middleware thi moi su dung duoc req.user

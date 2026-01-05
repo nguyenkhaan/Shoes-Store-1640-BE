@@ -28,7 +28,7 @@ async function createPendingUser(payload : UserDTO)
     }
 }
 //[Active User]
-async function activeUser(userID : number , email : string) {
+async function activeUser(userID : number , email : string) {  //Ham dung de kich hoat nguoi dung 
     try {
         const user = await prisma.user.findFirst({
           where: { id: userID, email }  //Kiem tra xem user co ton tai khong 
