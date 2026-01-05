@@ -3,12 +3,13 @@ import prisma from "../src/configs/mysqlPrisma.config"
 import {generateHash} from "../src/utlis/hash"
 async function main() 
 {
-    // await prisma.role.createMany({
-    //     data: [
-    //         {role: "Admin" , id: 1810}, 
-    //         {role : "User" , id : 1901}
-    //     ]
-    // })
+ 
+    await prisma.role.createMany({
+        data: [
+            {role: "Admin" , id: 1810}, 
+            {role : "User" , id : 1901}
+        ]
+    })
     const hashedAdminPassword = await generateHash(ENV.ADMIN_PASSWORD as string); 
     const admin = await prisma.user.create({
       data : {
@@ -45,13 +46,28 @@ async function main()
         verify: true, 
         password: hashedTesterPassword 
       } 
-    })
+    })  
     await prisma.userRole.create({
       data: {
         userID : tester.id, 
         roleID: 1901 //Vai tro la tester 
       }
-    })
+    })   
+   //Ham dung de tao nhanh kich thuoc 
+      const MIN_SIZE = 20;
+      const MAX_SIZE = 42;
+      
+      const sizes = Array.from(   
+        { length: MAX_SIZE - MIN_SIZE + 1 },
+        (_, i) => {
+          const size = MIN_SIZE + i;
+          return { value: size };
+        }
+      );
+      
+   await prisma.size.createMany({
+    data: sizes 
+   })
 }
 main()
   .then(async () => {

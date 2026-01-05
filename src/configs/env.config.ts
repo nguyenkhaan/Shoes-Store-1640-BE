@@ -19,6 +19,8 @@ const ENV = {
     TESTER_PASSWORD: process.env.TESTER_PASSWORD, 
     TESTER_EMAIL: process.env.TESTER_EMAIL, 
     ADMIN_EMAIL: process.env.ADMIN_EMAIL, 
+    SENDER: process.env.SENDER, 
+    SENDER_PASSWORD: process.env.SENDER_PASSWORD 
 } 
 export {ENV}
 
