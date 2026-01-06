@@ -12,7 +12,8 @@
     "prisma:reset": "npx prisma migrate reset",
     "prsima:generate": "npx prisma generate",
     "prisma:init": "npx prisma init",
-    "prisma:seed": "npx prisma db seed"
+    "prisma:seed": "npx prisma db seed", 
+     "setup": "npm install && docker compose up -d && npx prisma generate && npx prisma db seed"
   },
   "keywords": [],
   "author": "",
