@@ -15,4 +15,4 @@ api.use('/brands' , PublicBrandRoute)
 api.use('/sizes', PublicSizeRoute)
 
 
-export default Router().use('/api' , api)
+export default Router().use("/api", api);
