@@ -1,5 +1,5 @@
 import { Router } from "express";
-import User from "~/controllers/user.controllers";
+import User from "~/controllers/user.controller.password";  //Nho lay ham reset password nay de su dung lai 
 
 import credentials from "~/middlewares/authentication.middlewares";
 import { verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";

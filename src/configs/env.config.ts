@@ -1,32 +1,35 @@
-import dotenv from 'dotenv' 
-dotenv.config() 
+import dotenv from "dotenv";
+dotenv.config();
 
 const ENV = {
-    PORT: process.env.PORT || 6869, 
-    URL: process.env.URL || 'http://localhost:6869',
-    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET , //Key dung de giai ma access jwt token 
-    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET, //Key dung de giai ma refresh token 
-    RESET_PASSWORD_TOKEN_SECRET: process.env.RESET_PASSWORD_TOKEN_SECRET, 
-    HOST: process.env.HOST, 
-    DB_NAME: process.env.DB_NAME, 
-    DB_USER: process.env.DB_USER, 
-    DB_PASSWORD: process.env.DB_PASSWORD, 
-    DB_PORT: 3306, 
-    VERIFY_TOKEN_SECRET: process.env.VERIFY_TOKEN_SECRET, //Key dung de giai ma refresh jwt token 
-    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD, 
-    FE: process.env.FE, 
-    OATH_CLIENT_ID: process.env.OATH_CLIENT_ID, 
-    OATH_CLIENT_SECRET: process.env.OATH_CLIENT_SECRET, 
-    TESTER_PASSWORD: process.env.TESTER_PASSWORD, 
-    TESTER_EMAIL: process.env.TESTER_EMAIL, 
-    ADMIN_EMAIL: process.env.ADMIN_EMAIL, 
-    SENDER: process.env.SENDER, 
-    SENDER_PASSWORD: process.env.SENDER_PASSWORD 
-} 
-export {ENV}
+    PORT: process.env.PORT || 6869,
+    URL: process.env.URL || "http://localhost:6869",
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET, //Key dung de giai ma access jwt token
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET, //Key dung de giai ma refresh token
+    RESET_PASSWORD_TOKEN_SECRET: process.env.RESET_PASSWORD_TOKEN_SECRET,
+    HOST: process.env.HOST,
+    DB_NAME: process.env.DB_NAME,
+    DB_USER: process.env.DB_USER,
+    DB_PASSWORD: process.env.DB_PASSWORD,
+    DB_PORT: 3306,
+    VERIFY_TOKEN_SECRET: process.env.VERIFY_TOKEN_SECRET, //Key dung de giai ma refresh jwt token
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    FE: process.env.FE,
+    OATH_CLIENT_ID: process.env.OATH_CLIENT_ID,
+    OATH_CLIENT_SECRET: process.env.OATH_CLIENT_SECRET,
+    TESTER_PASSWORD: process.env.TESTER_PASSWORD,
+    TESTER_EMAIL: process.env.TESTER_EMAIL,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    SENDER: process.env.SENDER,
+    SENDER_PASSWORD: process.env.SENDER_PASSWORD,
+    CLOUDINARY_CLOUD : process.env.CLOUDINARY_CLOUD,
+    CLOUDINARY_SECRET : process.env.CLOUDINARY_SECRET, 
+    CLOUDINARY_API: process.env.CLOUDINARY_API,
+};
+export { ENV };
 
 /**
  * ENV.
- * 
- * 
+ *
+ *
  */
