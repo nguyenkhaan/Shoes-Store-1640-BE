@@ -3,15 +3,28 @@ import Router from 'express'
 import upload from '~/configs/multer.config'   //copy dong nay Neu gui goi tin dang multipart-form-data thi phai co no server moi parse du lieu ra duoc 
 import base64File from '~/utlis/base64File'   //Ham nay dung de chuyen doi chuoi req.file thanh file base64 
 import Cloudian from '~/services/cloudinary.services'  //Class chua cac ham thao tac voi anh (upload anh, xoa anh, lay url anh)
-
+import prisma from "~/configs/mysqlPrisma.config";
 const router = Router() 
 //Route upload hinha nh 
-router.post('/upload-image' , upload.single('image') , async (req : Request , res: Response) => {
+router.post('/upload-image' , upload.single('image') , async (req : any , res: Response) => {
     const file = base64File(req.file) 
     if (file)   //Neu qua trinh chuyen doi thanh cong 
     {
         const result = await Cloudian.uploadImage(file) 
         console.log('>>> Ket qua upload anh: ' , result) //Lay public_id trong goi tin tra ve de luu vao database 
+
+        const public_id = result.public_id; // Lay public_id de luu vao DB
+        const { email } = req.body; // Lay email tu body request de xac dinh nguoi dung
+
+        if (email) {
+            // Thuc hien luu public_id vao truong avatar cua bang user trong database
+            await prisma.user.update({
+                where: { email: email },
+                data: { avatar: public_id } 
+            });
+            console.log('>>> Đã lưu public_id vào DB cho user:', email);
+        }
+
         return res.status(200).json({
             message: 'UPLOAD SUCCESSFULLY', 
             // data: res - Dong nay gay loi vi du lieu nay khong co parse duoc 

@@ -95,7 +95,7 @@ async function verifyUser(token: string) {
 async function loginUser(userID : number , email : string , password : string) 
 {
     const hashedPassword = await prisma.user.findFirst({
-        where: {id : userID}, 
+        where: {id : userID}, // dong bo ten bien thanh id
         select: {
             password: true 
         }
@@ -127,7 +127,9 @@ async function refreshAccessToken(userID : number , email : string)
 {
     const roles = await findRoles(userID) 
     const access_token = makeAccessToken({
-        userID , email , roles
+        id :userID ,
+        email ,
+        roles
     }) 
     return {
         success: true, 

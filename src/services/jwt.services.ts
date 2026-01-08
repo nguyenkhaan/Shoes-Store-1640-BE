@@ -45,7 +45,8 @@ function makeAccessToken(payload : object)
 {
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET as string 
     const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
-        expiresIn: 24 * 3600 * 3 
+        expiresIn: '1d'
+        //24 * 3600 * 3 
     }) 
     return access_token
 }

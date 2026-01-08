@@ -31,7 +31,7 @@ router.get(  //phuong thuc dung de cap lai access_token
 )
 router.post(
     '/logout', 
-    credentials, 
+ //   credentials, 
     Auth.logout
 )
 router.post(

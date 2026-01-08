@@ -2,6 +2,7 @@ import prisma from "~/configs/mysqlPrisma.config"
 import { generateHash } from "~/utlis/hash"
 import { assignUserRole } from "~/services/role.services"
 import { UserDTO } from "~/types/UserDTO"    //Su dung kien thuc ve interface 
+import HttpStatus from "~/utlis/statusMap";
 //[Pending User] 
 async function createPendingUser(payload : UserDTO) 
 {
@@ -77,8 +78,58 @@ async function findUserByEmail(email : string)
     }
 }
 //Get user By id 
+async function getUserById(id: number) {
+    try {
+        return await prisma.user.findUnique({ 
+            where: { id },
+            include: { userRoles: true } // neu can
+        });
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+}
 
+// UpdateUser
+async function updateUser(id: number, data: Partial<UserDTO> & { avatar?: string }) {
+    try {
+        return await prisma.user.update({
+            where: { id },
+            data: data
+        });
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+}
 
-export { activeUser , createPendingUser , findUserByEmail , createUser };
+//Reset Password
+async function resetUserPassword(email : string , password : string) 
+{
+    try {
+        const hashedPassword = await generateHash(password) 
+        const resultChange = await prisma.user.update({
+            where: {
+                email 
+            }, 
+            data : {
+                password: hashedPassword
+            }
+        })
+        return {
+            success: true, 
+            message: "Password changes successfully", 
+            httpStatus: HttpStatus.OK 
+        }
+    } 
+    catch (err) {
+        return {
+            success: false, 
+            message: "Password changes failed", 
+            httpStatus: HttpStatus.UNVAILABLE
+        }
+    }
+}
+export { activeUser , createPendingUser , findUserByEmail , createUser , resetUserPassword, getUserById , updateUser};
 //Document: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/mysql
 
