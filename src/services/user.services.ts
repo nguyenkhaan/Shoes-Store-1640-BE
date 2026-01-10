@@ -107,8 +107,11 @@ async function getUserById(id: number) {
 async function updateUser(id: number, data: Partial<UserDTO> & { avatar?: string }) {
     try {
         return await prisma.user.update({
-            where: { id },
-            data: data
+            where: { id: Number(id) },
+            data:
+            {
+                ...data
+            }
         });
     } catch (err) {
         console.log(err);
@@ -143,6 +146,7 @@ async function resetUserPassword(email : string , password : string)
         }
     }
 }
+
 export { activeUser , createPendingUser , findUserByEmail , createUser , resetUserPassword, getUserById , updateUser};
 //Document: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/mysql
 

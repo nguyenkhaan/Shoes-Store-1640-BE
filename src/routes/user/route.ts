@@ -1,13 +1,14 @@
 import { Router } from "express";
 //import User from "~/controllers/user.controller.password";  //Nho lay ham reset password nay de su dung lai 
 
-import User from "~/controllers/user.controllers";
+import User from "~/controllers/user.controller";
 
 import credentials from "~/middlewares/authentication.middlewares";
 import { verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";
 import { requireFields } from "~/middlewares/requiredField.middlewares";
 import { checkUserStatusByEmail, checkUserStatusByID } from "~/middlewares/active.middlewares";
 import Validation from "~/middlewares/validation.middlewares";
+import upload from "~/configs/multer.config";
 const router = Router();
 
 //Public
@@ -65,4 +66,5 @@ router.patch(
     requireFields(["image_id"]), 
     User.updateAvatar
 );
+
 export default router 
