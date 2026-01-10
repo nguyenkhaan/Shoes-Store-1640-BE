@@ -9,7 +9,6 @@ import {
     findUserByEmail, 
     updateUser 
 } from "~/services/user.services"; 
-import prisma from "~/configs/mysqlPrisma.config";
 
 class User {
     // 
@@ -101,7 +100,8 @@ class User {
         try {
             return res.status(200).json({
                 success: true,
-                data: req.user
+                data: req.user  //Ham nay sai, req.user khong phai de luu thong tin nguoi dung, no chi luu may cai trich ra tu jwt token thoi (userID, email, roles). 
+                //Trich xuat userID ra tu req.user, sau do query xuong database de lay thong tin nguoi dung roi gui ve 
             });
         } catch (error) {
             return res.status(500).json({ success: false, message: "Lỗi lấy profile" });
@@ -109,9 +109,10 @@ class User {
     };
 
     // Bo sung them ham cap nhat anh dai dien cho user
-    static async updateAvatar(req: Request, res: Response) {
+    static async updateAvatar(req: Request, res: Response) {   //Ham nay sai -> Su dung multer.single('avatar') 
+         //Xem lai cai file a code do trong route/images_route, a co de cho may dua coi cach de lay file anh va upload len cloudianry ma ma?? 
         try {
-            const { userId, avatar } = req.body; // avatar chinh la public_id tren Cloudinary
+            const { userId, avatar } = req.body; // avatar chinh la public_id tren Cloudinary, avatar thi nhan file va tien hanh pdate lenc loudinary, khong phai nhu the nay 
             const result = await updateUser(Number(userId), { avatar });
 
             if (result) {
@@ -129,3 +130,10 @@ class User {
 }
 
 export default User;
+
+/**
+ * REVIEW CODE 
+ * 1. Chinh cac message lai thanh Tieng anh 
+ * 2. O ham upload avatar, ben phia FE gui cai file ve, ko phai cai public_id. Ho se gui cai anh ve nen em  phai dung multer de nhan cai file do, 
+ * Update lai avatar bang cach tai anh nguoi ta gui len cloudinary, va thay public_id luu trong db thanh cai public_id moi (Do viec upload hinh anh len)
+ */

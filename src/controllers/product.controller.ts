@@ -4,7 +4,8 @@ import * as productService from "~/services/product.services";
 
 class Product {
   // Tạo sản phẩm mới (Admin)
-  static async createProduct(req: Request, res: Response) {
+  static async createProduct(req: Request, res: Response) {  //Ham nay sai, phai cho nguoi ta nhan anh, cai thumbnail duoc nhan bang cach dung req.file 
+    //Xem lai cai file a code do, a co de cho may dua coi cach de lay file anh ma?? 
     const { name, description, price, active, thumbnail, brandID } = req.body;
     const responseData = await productService.createProduct({
       name,
@@ -57,7 +58,7 @@ class Product {
       description,
       price,
       active,
-      thumbnail,
+      thumbnail, //Cai thumnail nay e phai viet ham de no bien thanh url va gui lai cho phia FE, trong cloudinary.services co ham de doi 
       brandID,
     });
 
