@@ -5,11 +5,13 @@ import credentials from "~/middlewares/authentication.middlewares"; //Authentica
 import { verifyRole } from "~/middlewares/authorization.middlewares"; //Authorization
 import { checkUserStatusByEmail } from "~/middlewares/active.middlewares";
 import { verifyRefreshToken } from "~/middlewares/refresh.middlewares";
+import upload from '~/configs/multer.config'
 import Validation from "~/middlewares/validation.middlewares";
 const router = Router();
 
 router.post(
     "/register",
+    upload.single('avatar'), //Cho phep nguoi dung upload avatar len, neu khong co avatar thi no se la undefined 
     requireFields(["name", "email", "password", "phone", "address"]),
     Auth.register
 ); //Bat buoc phai gui cac truong nay de tien hanh dang ki

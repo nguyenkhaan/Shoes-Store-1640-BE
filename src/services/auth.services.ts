@@ -14,7 +14,7 @@ import prisma from "~/configs/mysqlPrisma.config"
 import { ENV } from "~/configs/env.config";
 async function registerUser(data: any) {
     try {
-        //name , email , avatar , password , phone , address , avatar
+        //name , email , avatar , password , phone , address , avatar (optional) 
         const {email , password} = data 
         if (!email || !password)
             return {
@@ -30,7 +30,7 @@ async function registerUser(data: any) {
                 success: false, 
                 httpStatus: HttpStatus.CONFLICT 
             }
-        //Create pending user v
+        //Create pending user  
         const pendingUser = await createPendingUser(data);
         if (pendingUser) {
             const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 

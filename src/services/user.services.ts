@@ -3,22 +3,35 @@ import { generateHash } from "~/utlis/hash"
 import { assignUserRole } from "~/services/role.services"
 import { UserDTO } from "~/types/UserDTO"    //Su dung kien thuc ve interface 
 import HttpStatus from "~/utlis/statusMap";
+import Cloudian from "~/services/cloudinary.services";
 //[Pending User] 
 async function createPendingUser(payload : UserDTO) 
 {
     try {
+        //Password Handle 
         const password = payload.password 
         const hashPassword = await generateHash(password as string) 
         if (!hashPassword) 
             return false 
+        //Avatar Handle 
+        let public_id = '' 
+        if (payload.avatar) 
+            public_id = (await Cloudian.uploadImage(payload.avatar)).public_id
+
+        //Store to the database 
         const result = await prisma.user.create({
             data: {
                 ...payload, 
-                verify : false 
+                verify : false, 
+                password: hashPassword, 
+                avatar: (public_id? public_id : 'https://www.svgrepo.com/show/452030/avatar-default.svg')
             }
         })
+
         //Assign permission to user 
+
         await assignUserRole(result.id , ["User"])
+
         // console.log(' >>> Check thong tin nguoi dung: ' , result)   
         return result
     } 

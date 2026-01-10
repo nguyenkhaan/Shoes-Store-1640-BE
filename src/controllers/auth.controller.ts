@@ -5,12 +5,19 @@ import { JwtPayload } from "jsonwebtoken";
 import { registerUser, verifyUser, loginUser , refreshAccessToken , loginGoogle } from "~/services/auth.services";
 import { findUserByEmail } from "~/services/user.services";
 import HttpStatus from "~/utlis/statusMap";
-
-
+import upload from "~/configs/multer.config";  
+import base64File from "~/utlis/base64File";
 class Auth 
 {
-    static async register(req: Request, res: Response) {
-        const responseData = await registerUser(req.body);
+    static async register(req: Request, res: Response)   //Du lieu nhan luc nay la 
+    {
+        let file = null    //Nhan lay avatar 
+        if (req.file) 
+            file = base64File(req.file) //Co the tien hanh upload thang cai chuoi nay len 
+        const data = {...req.body} 
+        if (file) data.avatar = file 
+        const responseData = await registerUser(data);  //Truyen data vao register User 
+        
         if (responseData)
             return res.status(responseData.httpStatus).json(responseData);
         return res

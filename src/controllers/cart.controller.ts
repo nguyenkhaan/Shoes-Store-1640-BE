@@ -18,19 +18,8 @@ class Cart
     }
     static async deleteCart(req : Request , res : Response) 
     {
-        const cartID = Number(req.params.id) 
         const userID = Number((req.user as JwtPayload).userID) 
-        const responseData = await CartServices.deleteCart(userID , cartID) 
-        if (responseData) 
-            return res.status(responseData.httpStatus).json(responseData)
-        return res
-        .status(HttpStatus.INTERNAL)
-        .json({ success: false, message: "Internal Server Error" })
-    }
-    static async deleteAllCarts(req : Request , res : Response) 
-    {
-        const userID = Number((req.user as JwtPayload).userID) 
-        const responseData = await CartServices.deleteAllCart(userID) 
+        const responseData = await CartServices.deleteCart(userID) 
         if (responseData) 
             return res.status(responseData.httpStatus).json(responseData)
         return res
@@ -40,7 +29,7 @@ class Cart
     static async getAllCarts(req : Request , res : Response) 
     {
         const userID = Number((req.user as JwtPayload).userID) 
-        const responseData = await CartServices.getAllCarts(userID) 
+        const responseData = await CartServices.getCarts(userID) 
         if (responseData) 
             return res.status(responseData.httpStatus).json(responseData)
         return res

@@ -33,7 +33,7 @@ function checkUserStatusByEmail() //Kiem tra trang thai nguoi dung , tim kiem ba
 function checkUserStatusByID() //Kiem tra trang thai nguoi dung , tim kiem nguoi dung bang userID 
 {
     const checkUserStatusMiddleware = async (req : Request , res : Response , next : NextFunction) => {
-        console.log('>>>Dang kiem tra user status') 
+        // console.log('>>>Dang kiem tra user status') 
         const userID = (req.user as JwtPayload).userID 
         let user = null 
         user = await prisma.user.findFirst({
