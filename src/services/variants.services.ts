@@ -2,15 +2,16 @@ import prisma from "~/configs/mysqlPrisma.config";
 import HttpStatus from "~/utlis/statusMap";
 import { VariantCreateData, VariantUpdateData } from "~/types/VariantsDTO";
 
-// Tạo 1 variant
-async function createVariant(data: VariantCreateData) {
+// Tạo variant (hỗ trợ tạo 1 hoặc nhiều)
+async function createVariant(
+  productID: number,
+  variants: Array<{ sizeID: number; colorID: number; quantity: number }>
+) {
   try {
-    // Kiểm tra product, size, color có tồn tại không
-    const [product, size, color] = await Promise.all([
-      prisma.product.findUnique({ where: { id: data.productID } }),
-      prisma.size.findUnique({ where: { id: data.sizeID } }),
-      prisma.color.findUnique({ where: { id: data.colorID } }),
-    ]);
+    // Kiểm tra product tồn tại
+    const product = await prisma.product.findUnique({
+      where: { id: productID },
+    });
 
     if (!product) {
       return {
@@ -20,58 +21,78 @@ async function createVariant(data: VariantCreateData) {
       };
     }
 
-    if (!size) {
+    // Lấy tất cả size và color IDs để validate
+    const sizeIDs = [...new Set(variants.map((v) => v.sizeID))];
+    const colorIDs = [...new Set(variants.map((v) => v.colorID))];
+
+    const [sizes, colors] = await Promise.all([
+      prisma.size.findMany({ where: { id: { in: sizeIDs } } }),
+      prisma.color.findMany({ where: { id: { in: colorIDs } } }),
+    ]);
+
+    // Validate
+    if (sizes.length !== sizeIDs.length) {
       return {
         success: false,
-        message: "Size not found",
+        message: "One or more sizes not found",
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
 
-    if (!color) {
+    if (colors.length !== colorIDs.length) {
       return {
         success: false,
-        message: "Color not found",
+        message: "One or more colors not found",
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
 
-    // Kiểm tra variant này đã tồn tại chưa (cùng product, size, color)
-    const existingVariant = await prisma.productVariant.findFirst({
-      where: {
-        productID: data.productID,
-        sizeID: data.sizeID,
-        colorID: data.colorID,
-      },
+    // Tạo variants (sử dụng createMany để tối ưu)
+    const createdVariants = await prisma.productVariant.createMany({
+      data: variants.map((v) => ({
+        productID,
+        sizeID: v.sizeID,
+        colorID: v.colorID,
+        quantity: v.quantity,
+      })),
+      skipDuplicates: true, // Không tạo nếu đã tồn tại bộ size-color này cho product
     });
 
-    if (existingVariant) {
+    if (createdVariants.count === 0) {
       return {
         success: false,
-        message: "Variant with this size and color already exists for this product",
+        message: "No new variants created (duplicates or invalid data)",
         httpStatus: HttpStatus.BAD_REQUEST,
       };
     }
 
-    const variant = await prisma.productVariant.create({
-      data: {
-        productID: data.productID,
-        sizeID: data.sizeID,
-        colorID: data.colorID,
-        quantity: data.quantity,
-      },
-      include: {
-        product: true,
-        size: true,
-        color: true,
+    // Lấy lại danh sách variants của product để trả về
+    const allVariants = await prisma.productVariant.findMany({
+      where: { productID },
+      select: {
+        id: true,
+        quantity: true,
+        size: {
+          select: {
+            id: true,
+            value: true,
+          },
+        },
+        color: {
+          select: {
+            id: true,
+            name: true,
+            hex: true,
+          },
+        },
       },
     });
 
     return {
       success: true,
-      message: "Product variant created successfully",
+      message: `Successfully processed ${variants.length} variant(s). Created ${createdVariants.count} new variant(s).`,
       httpStatus: HttpStatus.CREATED,
-      data: variant,
+      data: allVariants,
     };
   } catch (error) {
     console.error(">>> Create variant error:", error);
@@ -83,14 +104,85 @@ async function createVariant(data: VariantCreateData) {
   }
 }
 
+// Lấy tất cả variants
+async function getAllVariants() {
+  try {
+    const variants = await prisma.productVariant.findMany({
+      select: {
+        id: true,
+        quantity: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        size: {
+          select: {
+            id: true,
+            value: true,
+          },
+        },
+        color: {
+          select: {
+            id: true,
+            name: true,
+            hex: true,
+          },
+        },
+      },
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    return {
+      success: true,
+      message: "Get all variants successfully",
+      httpStatus: HttpStatus.OK,
+      data: variants,
+    };
+  } catch (error) {
+    console.error(">>> Get all variants error:", error);
+    return {
+      success: false,
+      message: "Get all variants failed",
+      httpStatus: HttpStatus.INTERNAL,
+    };
+  }
+}
+
 // Lấy tất cả variants của 1 product
 async function getVariantsByProduct(productID: number) {
   try {
+    const product = await prisma.product.findUnique({
+      where: { id: productID },
+    });
+    if (!product) {
+      return {
+        success: false,
+        message: "Product not found",
+        httpStatus: HttpStatus.NOT_FOUND,
+      };
+    }
     const variants = await prisma.productVariant.findMany({
       where: { productID },
-      include: {
-        size: true,
-        color: true,
+      select: {
+        id: true,
+        quantity: true,
+        size: {
+          select: {
+            id: true,
+            value: true,
+          },
+        },
+        color: {
+          select: {
+            id: true,
+            name: true,
+            hex: true,
+          },
+        },
       },
     });
 
@@ -115,10 +207,28 @@ async function getVariantByID(id: number) {
   try {
     const variant = await prisma.productVariant.findUnique({
       where: { id },
-      include: {
-        product: true,
-        size: true,
-        color: true,
+      select: {
+        id: true,
+        quantity: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        size: {
+          select: {
+            id: true,
+            value: true,
+          },
+        },
+        color: {
+          select: {
+            id: true,
+            name: true,
+            hex: true,
+          },
+        },
       },
     });
 
@@ -187,10 +297,28 @@ async function updateVariant(id: number, data: VariantUpdateData) {
     const updatedVariant = await prisma.productVariant.update({
       where: { id },
       data,
-      include: {
-        product: true,
-        size: true,
-        color: true,
+      select: {
+        id: true,
+        quantity: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        size: {
+          select: {
+            id: true,
+            value: true,
+          },
+        },
+        color: {
+          select: {
+            id: true,
+            name: true,
+            hex: true,
+          },
+        },
       },
     });
 
@@ -256,85 +384,4 @@ async function deleteVariant(id: number) {
   }
 }
 
-// Tạo nhiều variants cùng lúc
-async function createMultipleVariants(
-  productID: number,
-  variants: Array<{ sizeID: number; colorID: number; quantity: number }>
-) {
-  try {
-    // Kiểm tra product tồn tại
-    const product = await prisma.product.findUnique({
-      where: { id: productID },
-    });
-
-    if (!product) {
-      return {
-        success: false,
-        message: "Product not found",
-        httpStatus: HttpStatus.NOT_FOUND,
-      };
-    }
-
-    // Lấy tất cả size và color IDs để validate
-    const sizeIDs = [...new Set(variants.map((v) => v.sizeID))];
-    const colorIDs = [...new Set(variants.map((v) => v.colorID))];
-
-    const [sizes, colors] = await Promise.all([
-      prisma.size.findMany({ where: { id: { in: sizeIDs } } }),
-      prisma.color.findMany({ where: { id: { in: colorIDs } } }),
-    ]);
-
-    // Validate
-    if (sizes.length !== sizeIDs.length) {
-      return {
-        success: false,
-        message: "One or more sizes not found",
-        httpStatus: HttpStatus.NOT_FOUND,
-      };
-    }
-
-    if (colors.length !== colorIDs.length) {
-      return {
-        success: false,
-        message: "One or more colors not found",
-        httpStatus: HttpStatus.NOT_FOUND,
-      };
-    }
-
-    // Tạo variants
-    const createdVariants = await prisma.productVariant.createMany({
-      data: variants.map((v) => ({
-        productID,
-        sizeID: v.sizeID,
-        colorID: v.colorID,
-        quantity: v.quantity,
-      })),
-      skipDuplicates: true, // Skip nếu đã tồn tại
-    });
-
-    // Lấy lại variants vừa tạo
-    const allVariants = await prisma.productVariant.findMany({
-      where: { productID },
-      include: {
-        size: true,
-        color: true,
-      },
-    });
-
-    return {
-      success: true,
-      message: `Created ${createdVariants.count} variants successfully`,
-      httpStatus: HttpStatus.CREATED,
-      data: allVariants,
-    };
-  } catch (error) {
-    console.error(">>> Create multiple variants error:", error);
-    return {
-      success: false,
-      message: "Create variants failed",
-      httpStatus: HttpStatus.BAD_REQUEST,
-    };
-  }
-}
-
-export { createVariant, getVariantsByProduct, getVariantByID, updateVariant, deleteVariant, createMultipleVariants };
+export { createVariant, getAllVariants, getVariantsByProduct, getVariantByID, updateVariant, deleteVariant };

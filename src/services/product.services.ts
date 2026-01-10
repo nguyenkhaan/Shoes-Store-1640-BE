@@ -6,7 +6,6 @@ import { Prisma } from "generated/prisma/edge";
 // Tạo sản phẩm mới
 async function createProduct(data: ProductDTO) {
   try {
-    // Kiểm tra brand có tồn tại không
     const brand = await prisma.brand.findUnique({
       where: { id: data.brandID },
     });
@@ -21,11 +20,26 @@ async function createProduct(data: ProductDTO) {
 
     const product = await prisma.product.create({
       data: {
-        ...data,
+        name: data.name,
+        description: data.description,
         price: new Prisma.Decimal(data.price.toString()),
+        active: data.active,
+        thumbnail: data.thumbnail,
+        brandID: data.brandID,
       },
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -52,12 +66,36 @@ async function getAllProducts() {
       where: {
         active: true,
       },
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },
@@ -86,12 +124,36 @@ async function getAllProducts() {
 async function getAllProductsAdmin() {
   try {
     const products = await prisma.product.findMany({
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },
@@ -121,12 +183,36 @@ async function getProductByID(id: number) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },
@@ -194,12 +280,36 @@ async function updateProduct(id: number, data: ProductDTO) {
     const updatedProduct = await prisma.product.update({
       where: { id },
       data: updateData,
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },
@@ -226,9 +336,6 @@ async function deleteProduct(id: number) {
   try {
     const existingProduct = await prisma.product.findUnique({
       where: { id },
-      include: {
-        productVariants: true,
-      },
     });
 
     if (!existingProduct) {
@@ -239,22 +346,18 @@ async function deleteProduct(id: number) {
       };
     }
 
-    // Kiểm tra xem có variant nào không
-    if (existingProduct.productVariants.length > 0) {
-      return {
-        success: false,
-        message: "Cannot delete product with existing variants. Please delete all variants first.",
-        httpStatus: HttpStatus.BAD_REQUEST,
-      };
-    }
-
-    await prisma.product.delete({
-      where: { id },
-    });
+    await prisma.$transaction([
+      prisma.productVariant.deleteMany({
+        where: { productID: id },
+      }),
+      prisma.product.delete({
+        where: { id },
+      }),
+    ]);
 
     return {
       success: true,
-      message: "Product deleted successfully",
+      message: "Product and its variants deleted successfully",
       httpStatus: HttpStatus.OK,
     };
   } catch (error) {
@@ -286,12 +389,36 @@ async function searchProducts(query: string) {
           },
         ],
       },
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },
@@ -316,17 +443,51 @@ async function searchProducts(query: string) {
 // Lấy sản phẩm theo brand
 async function getProductsByBrand(brandID: number) {
   try {
+    const brand = await prisma.brand.findUnique({
+      where: { id: brandID },
+    });
+    if (!brand) {
+      return {
+        success: false,
+        message: "Brand not found",
+        httpStatus: HttpStatus.NOT_FOUND,
+      };
+    }
     const products = await prisma.product.findMany({
       where: {
         brandID,
         active: true,
       },
-      include: {
-        brand: true,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        active: true,
+        thumbnail: true,
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         productVariants: {
-          include: {
-            color: true,
-            size: true,
+          select: {
+            id: true,
+            quantity: true,
+            color: {
+              select: {
+                id: true,
+                name: true,
+                hex: true,
+              },
+            },
+            size: {
+              select: {
+                id: true,
+                value: true,
+              },
+            },
           },
         },
       },

@@ -1,7 +1,7 @@
 import { Router } from "express";
-//import User from "~/controllers/user.controller.password";  //Nho lay ham reset password nay de su dung lai 
+//import User from "~/controllers/user.controller.password";  //Nho lay ham reset password nay de su dung lai
 
-import User from "~/controllers/user.controllers";
+import User from "~/controllers/user.controller";
 
 import credentials from "~/middlewares/authentication.middlewares";
 import { verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";
@@ -12,21 +12,21 @@ const router = Router();
 
 //Public
 router.post(
-    '/forgot-password', 
- //   credentials, // Nay la public nen khong can xac thuc
-    requireFields(["email"]), 
-    checkUserStatusByEmail(), 
-    User.forgotPassword
+  "/forgot-password",
+  //   credentials, // Nay la public nen khong can xac thuc
+  requireFields(["email"]),
+  checkUserStatusByEmail(),
+  User.forgotPassword
 );
 router.post(
-    "/reset-password",
-//    credentials,   // nay la public nen khong can xac thuc
-    requireFields(["email", "token", "password"]),
-    Validation.email, 
-    Validation.password, 
-    checkUserStatusByEmail(),
-    verifyResetPasswordToken,
-    User.changePassword 
+  "/reset-password",
+  //    credentials,   // nay la public nen khong can xac thuc
+  requireFields(["email", "token", "password"]),
+  Validation.email,
+  Validation.password,
+  checkUserStatusByEmail(),
+  verifyResetPasswordToken,
+  User.changePassword
 );
 
 /* Private
@@ -49,20 +49,10 @@ router.post(
 
 //Private
 router.get(
-    '/profile', 
-    credentials,       //Authentication
-    User.getProfile
+  "/profile",
+  credentials, //Authentication
+  User.getProfile
 );
-router.patch(
-    '/update-profile', 
-    credentials,  
-    requireFields(["name", "phone"]), 
-    User.updateProfile
-);
-router.patch(
-    '/update-avatar', 
-    credentials, 
-    requireFields(["image_id"]), 
-    User.updateAvatar
-);
-export default router 
+router.patch("/update-profile", credentials, requireFields(["name", "phone"]), User.updateProfile);
+router.patch("/update-avatar", credentials, requireFields(["image_id"]), User.updateAvatar);
+export default router;

@@ -3,15 +3,45 @@ import HttpStatus from "~/utlis/statusMap";
 import * as productVariantService from "~/services/variants.services";
 
 class ProductVariant {
-  // Tạo variant cho sản phẩm
+  // Tạo variant cho sản phẩm (Hỗ trợ 1 hoặc nhiều)
   static async createVariant(req: Request, res: Response) {
-    const { productID, sizeID, colorID, quantity } = req.body;
-    const responseData = await productVariantService.createVariant({
-      productID,
-      sizeID,
-      colorID,
-      quantity,
-    });
+    const { productID, sizeID, colorID, quantity, variants } = req.body;
+
+    let variantsToCreate = [];
+
+    if (Array.isArray(variants)) {
+      // Trường hợp gửi mảng variants
+      variantsToCreate = variants.map((v: any) => ({
+        sizeID: Number(v.sizeID),
+        colorID: Number(v.colorID),
+        quantity: Number(v.quantity),
+      }));
+    } else if (sizeID && colorID && quantity) {
+      // Trường hợp gửi 1 variant lẻ ở body
+      variantsToCreate = [
+        {
+          sizeID: Number(sizeID),
+          colorID: Number(colorID),
+          quantity: Number(quantity),
+        },
+      ];
+    } else {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        message: "Missing variant details (either sizeID, colorID, quantity or variants array)",
+      });
+    }
+
+    const responseData = await productVariantService.createVariant(Number(productID), variantsToCreate);
+
+    if (responseData) return res.status(responseData.httpStatus).json(responseData);
+
+    return res.status(HttpStatus.INTERNAL).json({ success: false, message: "Internal Server Error" });
+  }
+
+  // Lấy tất cả variants (Admin)
+  static async getAllVariants(req: Request, res: Response) {
+    const responseData = await productVariantService.getAllVariants();
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
 
@@ -42,11 +72,12 @@ class ProductVariant {
   static async updateVariant(req: Request, res: Response) {
     const id = Number(req.params.id);
     const { sizeID, colorID, quantity } = req.body;
-    const responseData = await productVariantService.updateVariant(id, {
-      sizeID,
-      colorID,
-      quantity,
-    });
+    const updateData: any = {};
+    if (sizeID !== undefined) updateData.sizeID = Number(sizeID);
+    if (colorID !== undefined) updateData.colorID = Number(colorID);
+    if (quantity !== undefined) updateData.quantity = Number(quantity);
+
+    const responseData = await productVariantService.updateVariant(id, updateData);
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
 
@@ -57,16 +88,6 @@ class ProductVariant {
   static async deleteVariant(req: Request, res: Response) {
     const id = Number(req.params.id);
     const responseData = await productVariantService.deleteVariant(id);
-
-    if (responseData) return res.status(responseData.httpStatus).json(responseData);
-
-    return res.status(HttpStatus.INTERNAL).json({ success: false, message: "Internal Server Error" });
-  }
-
-  // Tạo nhiều variants cùng lúc cho 1 sản phẩm
-  static async createMultipleVariants(req: Request, res: Response) {
-    const { productID, variants } = req.body;
-    const responseData = await productVariantService.createMultipleVariants(productID, variants);
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
 

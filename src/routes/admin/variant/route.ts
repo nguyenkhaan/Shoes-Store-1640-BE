@@ -6,8 +6,8 @@ import Validation from "~/middlewares/validation.middlewares";
 
 const router = Router();
 
-router.post("/", requireFields(["productID", "sizeID", "colorID", "quantity"]), ProductVariant.createVariant);
-router.post("/bulk", requireFields(["productID", "variants"]), ProductVariant.createMultipleVariants);
+router.get("/", ProductVariant.getAllVariants);
+router.post("/", requireFields(["productID"]), ProductVariant.createVariant);
 router.get("/product/:productID", Validation.numberIDParam, ProductVariant.getVariantsByProduct);
 router.get("/:id", Validation.numberIDParam, ProductVariant.getVariantByID);
 router.put("/:id", Validation.numberIDParam, ProductVariant.updateVariant);

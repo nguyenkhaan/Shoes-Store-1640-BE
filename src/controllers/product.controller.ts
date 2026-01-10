@@ -1,19 +1,30 @@
 import { Request, Response } from "express";
 import HttpStatus from "~/utlis/statusMap";
 import * as productService from "~/services/product.services";
+import base64File from "~/utlis/base64File";
+import Cloudian from "~/services/cloudinary.services";
 
 class Product {
   // Tạo sản phẩm mới (Admin)
-  static async createProduct(req: Request, res: Response) {  //Ham nay sai, phai cho nguoi ta nhan anh, cai thumbnail duoc nhan bang cach dung req.file 
-    //Xem lai cai file a code do, a co de cho may dua coi cach de lay file anh ma?? 
-    const { name, description, price, active, thumbnail, brandID } = req.body;
+  static async createProduct(req: any, res: Response) {
+    const { name, description, price, active, brandID } = req.body;
+    let thumbnail = req.body.thumbnail;
+
+    if (req.file) {
+      const base64 = base64File(req.file);
+      if (base64) {
+        const result = await Cloudian.uploadImage(base64);
+        thumbnail = result.public_id;
+      }
+    }
+
     const responseData = await productService.createProduct({
       name,
       description,
-      price,
-      active,
+      price: Number(price),
+      active: active === "true" || active === true,
       thumbnail,
-      brandID,
+      brandID: Number(brandID),
     });
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
@@ -50,17 +61,25 @@ class Product {
   }
 
   // Cập nhật sản phẩm (Admin)
-  static async updateProduct(req: Request, res: Response) {
+  static async updateProduct(req: any, res: Response) {
     const id = Number(req.params.id);
-    const { name, description, price, active, thumbnail, brandID } = req.body;
-    const responseData = await productService.updateProduct(id, {
-      name,
-      description,
-      price,
-      active,
-      thumbnail, //Cai thumnail nay e phai viet ham de no bien thanh url va gui lai cho phia FE, trong cloudinary.services co ham de doi 
-      brandID,
-    });
+    const { name, description, price, active, brandID } = req.body;
+    let thumbnail = req.body.thumbnail;
+
+    if (req.file) {
+      const base64 = base64File(req.file);
+      if (base64) {
+        const result = await Cloudian.uploadImage(base64);
+        thumbnail = result.public_id;
+      }
+    }
+
+    const updateData: any = { name, description, thumbnail };
+    if (price !== undefined) updateData.price = Number(price);
+    if (active !== undefined) updateData.active = active === "true" || active === true;
+    if (brandID !== undefined) updateData.brandID = Number(brandID);
+
+    const responseData = await productService.updateProduct(id, updateData);
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
 
