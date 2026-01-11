@@ -4,29 +4,32 @@ import { Router } from "express";
 import User from "~/controllers/user.controller";
 
 import credentials from "~/middlewares/authentication.middlewares";
-import { verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";
+import { verifyResetEmailToken, verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";
 import { requireFields } from "~/middlewares/requiredField.middlewares";
-import { checkUserStatusByEmail, checkUserStatusByID } from "~/middlewares/active.middlewares";
+import {
+    checkUserStatusByEmail,
+    checkUserStatusByID,
+} from "~/middlewares/active.middlewares";
 import Validation from "~/middlewares/validation.middlewares";
 const router = Router();
 
 //Public
 router.post(
-  "/forgot-password",
-  //   credentials, // Nay la public nen khong can xac thuc
-  requireFields(["email"]),
-  checkUserStatusByEmail(),
-  User.forgotPassword
+    "/forgot-password",
+    credentials, // Nay la public nen khong can xac thuc
+    requireFields(["email"]),
+    checkUserStatusByEmail(),
+    User.forgotPassword
 );
 router.post(
-  "/reset-password",
-  //    credentials,   // nay la public nen khong can xac thuc
-  requireFields(["email", "token", "password"]),
-  Validation.email,
-  Validation.password,
-  checkUserStatusByEmail(),
-  verifyResetPasswordToken,
-  User.changePassword
+    "/reset-password",
+    credentials, // nay la public nen khong can xac thuc
+    requireFields(["email", "token", "password"]),
+    Validation.email,
+    Validation.password,
+    checkUserStatusByEmail(),
+    verifyResetPasswordToken,
+    User.changePassword
 );
 
 /* Private
@@ -49,10 +52,33 @@ router.post(
 
 //Private
 router.get(
-  "/profile",
-  credentials, //Authentication
-  User.getProfile
+    "/profile",
+    credentials, //Authentication
+    User.getProfile
 );
-router.patch("/update-profile", credentials, requireFields(["name", "phone"]), User.updateProfile);
-router.patch("/update-avatar", credentials, requireFields(["image_id"]), User.updateAvatar);
+router.patch(
+    "/update-profile",
+    credentials,
+    requireFields(["name", "phone"]),
+    User.updateProfile
+);
+router.patch(
+    "/update-avatar",
+    credentials,
+    requireFields(["image_id"]),
+    User.updateAvatar
+); //Ham update avatar bi sai roi
+router.post("/change-email", 
+  credentials, 
+  requireFields(["email", "password"]), 
+  Validation.email, 
+  Validation.password, 
+  User.lostEmail //Ham nay se tien hanh gui mail 
+); 
+router.post("/reset-email" , 
+  credentials, 
+  requireFields(["email" , "token"]), 
+  verifyResetEmailToken, 
+  User.changeEmail 
+)
 export default router;

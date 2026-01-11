@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Xác nhận đổi email</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
+
+        .email-wrapper {
+            width: 100%;
+            padding: 30px 0;
+        }
+
+        .email-container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            padding: 24px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .email-header h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .email-body {
+            padding: 30px;
+        }
+
+        .email-body p {
+            margin: 0 0 16px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .email-body strong {
+            color: #111;
+        }
+
+        .btn-confirm {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 14px 28px;
+            background-color: #0ea5e9;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .btn-confirm:hover {
+            background-color: #0284c7;
+        }
+
+        .email-footer {
+            padding: 20px 30px;
+            background-color: #f9fafb;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .expire {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 24px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="email-header">
+                <h3>Xác nhận đổi email</h3>
+            </div>
+
+            <!-- Body -->
+            <div class="email-body">
+                <p>Xin chào <strong><%= to %></strong>,</p>
+
+                <p>
+                    Chúng tôi nhận được yêu cầu thay đổi email cho tài khoản của bạn.
+                </p>
+
+                <p>
+                    Email mới bạn muốn sử dụng là:
+                    <strong><%= newEmail %></strong>
+                </p>
+
+                <p>
+                    Để hoàn tất quá trình đổi email, vui lòng nhấn vào nút bên dưới:
+                </p>
+
+                <div style="text-align: center;">
+                    <a href="<%= confirmLink %>" class="btn-confirm">
+                        Xác nhận đổi email
+                    </a>
+                </div>
+
+                <div class="divider"></div>
+
+                <p>
+                    Liên kết này sẽ hết hạn sau
+                    <span class="expire"><%= expireMinutes %> phút</span>.
+                </p>
+
+                <p>
+                    Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email
+                    hoặc đổi mật khẩu ngay để bảo vệ tài khoản.
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="email-footer">
+                <p>
+                    Đây là email tự động, vui lòng không trả lời email này.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

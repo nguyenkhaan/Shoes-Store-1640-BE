@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { ENV } from "~/configs/env.config";
 import { OAuth2Client } from "google-auth-library";
 //GET SCRECT-KEY
-type TokenType = "access" | "refresh" | "verify"|"reset-password";
-type TokenPurpose = "login" | "refresh" | "email-verify"|"reset-password";   //Muc dich cu token la lam nhiem vu gi ? 
+type TokenType = "access" | "refresh" | "verify"|"reset-password"|"reset-email";
+type TokenPurpose = "login" | "refresh" | "email-verify"|"reset-password"|"reset-email";   //Muc dich cu token la lam nhiem vu gi ? 
 function getTokenSecretKeyByType(type: TokenType) {  //Truyen type vao de nhan lai secret key 
     switch (type) {
         case "verify":
@@ -12,6 +12,9 @@ function getTokenSecretKeyByType(type: TokenType) {  //Truyen type vao de nhan l
             return ENV.ACCESS_TOKEN_SECRET as string; //Access token
         case "refresh":
             return ENV.REFRESH_TOKEN_SECRET as string; //refresh Token 
+        case "reset-password": 
+            return ENV.RESET_PASSWORD_TOKEN_SECRET as string; 
+        
     }
     return ENV.ACCESS_TOKEN_SECRET as string;
 }
@@ -41,13 +44,21 @@ function encodeToken(payload: object) //Nhan vao du lieu va dong goi du lieu do 
     });
     return [access_token, refresh_token];
 }
+function makeToken(payload :object , purpose : TokenPurpose , secret_key: string, time : number)    //time: thoi gian het han 
+{
+    const token = jwt.sign({...payload , purpose} , secret_key , {
+        expiresIn: time 
+    })
+    return token 
+}
 function makeAccessToken(payload : object) 
 {
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET as string 
-    const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
-        expiresIn: '1d'
-        //24 * 3600 * 3 
-    }) 
+    // const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
+    //     expiresIn: '1d'
+    //     //24 * 3600 * 3 
+    // }) 
+    const access_token = makeToken(payload , 'login' , access_secret_key , 24 * 3600 * 3)
     return access_token
 }
 function makeResetPasswordToken(payload : object) 
@@ -56,6 +67,12 @@ function makeResetPasswordToken(payload : object)
     const token = jwt.sign({...payload , purpose : 'reset-password'} , reset_password_secret_key , {
         expiresIn: 5 * 60 //5 phut 
     }) 
+    return token 
+}
+function makeResetEmailToken(payload : object) 
+{
+    const reset_email_secret_key = ENV.RESET_EMAIL_TOKEN_SECRET as string 
+    const token = makeToken(payload , 'reset-email' , reset_email_secret_key , 5 * 60) 
     return token 
 }
 function decodeToken(token: string, type: TokenType, expectedPurpose: string) //Nhan vao token va tien hanh giai ma token do 
@@ -87,4 +104,4 @@ async function decodeGoogleToken(token : string)
     const payload = ticket.getPayload() 
     return payload 
 }
-export { encodeToken, decodeToken, createVerifyToken , makeAccessToken , decodeGoogleToken , makeResetPasswordToken };
+export { encodeToken, decodeToken, createVerifyToken , makeAccessToken , decodeGoogleToken , makeResetPasswordToken  , makeResetEmailToken};

@@ -1,14 +1,8 @@
-import {
-    createPendingUser,
-    activeUser,
-    findUserByEmail,
-    createUser,
-} from "~/services/user.services";
+import UserServices from "~/services/user.services";
 import { decodeToken, encodeToken , createVerifyToken, makeAccessToken , decodeGoogleToken } from "~/services/jwt.services";
 
 import HttpStatus from "~/utlis/statusMap";
 import { compareHash } from "~/utlis/hash";
-import { UserDTO } from "~/types/UserDTO";
 import { findRoles } from "~/services/role.services";
 import prisma from "~/configs/mysqlPrisma.config"
 import { ENV } from "~/configs/env.config";
@@ -23,7 +17,7 @@ async function registerUser(data: any) {
                 httpStatus: HttpStatus.BAD_REQUEST,
             };
         //Check if user exists 
-        const isUser = await findUserByEmail(email)  
+        const isUser = await UserServices.findUserByEmail(email)  
         if (isUser) 
             return {
                 message: "You are already a user", 
@@ -31,7 +25,7 @@ async function registerUser(data: any) {
                 httpStatus: HttpStatus.CONFLICT 
             }
         //Create pending user  
-        const pendingUser = await createPendingUser(data);
+        const pendingUser = await UserServices.createPendingUser(data);
         if (pendingUser) {
             const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 
             return {
@@ -74,7 +68,7 @@ async function verifyUser(token: string) {
         //Viet them ham vao cho user-services: Lay thong tin cu the ve 1 nguoi dung dua tren userID, Trong ham utlist thi viet 1 ham de xac dinh trang thai nguoi dung de chan logic
         const userID = result.userID;
         const email = result.email;
-        const verifyResult = await activeUser(userID, email);
+        const verifyResult = await UserServices.activeUser(userID, email);
         if (!verifyResult)
             return {
                 message: "User has not been recognized",
@@ -195,7 +189,7 @@ async function loginGoogle(code: string) {
 
     // 4. Nếu chưa có  tạo user mới
     if (!user) {
-        user = await createUser({
+        user = await UserServices.createUser({
             name : name as string , email : email as string,  
             avatar : picture as string 
         })

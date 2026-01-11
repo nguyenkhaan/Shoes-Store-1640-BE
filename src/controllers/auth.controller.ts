@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 //Cac ham createUser thi sao -> Cac ham thao tac voi database thi tach xuong services
 import { registerUser, verifyUser, loginUser , refreshAccessToken , loginGoogle } from "~/services/auth.services";
-import { findUserByEmail } from "~/services/user.services";
 import HttpStatus from "~/utlis/statusMap";
 import upload from "~/configs/multer.config";  
 import base64File from "~/utlis/base64File";
