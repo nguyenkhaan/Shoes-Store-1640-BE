@@ -11,6 +11,7 @@ import {
     checkUserStatusByID,
 } from "~/middlewares/active.middlewares";
 import Validation from "~/middlewares/validation.middlewares";
+import upload from "~/configs/multer.config";
 const router = Router();
 
 //Public
