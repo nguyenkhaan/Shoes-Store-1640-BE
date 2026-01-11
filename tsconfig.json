@@ -4,13 +4,13 @@
     // File Layout
     // "rootDir": "./src",
     "outDir": "./dist",
-    "typeRoots": ["./src/types" , "./node_module/@types",],  //Dat cai nay vao de extend types 
+    "typeRoots": ["./src/types", "./node_modules/@types"], //Dat cai nay vao de extend types
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "es2023",
-    "esModuleInterop": true, 
+    "esModuleInterop": true,
     "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
@@ -41,10 +41,9 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "baseUrl": ".", 
+    "baseUrl": ".",
     "paths": {
-       "~/*": ["src/*"]
-    }, 
-  
-  } 
+      "~/*": ["src/*"]
+    }
+  }
 }

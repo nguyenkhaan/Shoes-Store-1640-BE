@@ -1,2 +1,0 @@
-//Cac middleware can cai dat: validation (middleware dung de validate du lieu neu can) , authentication (Nguoi dung dang la ai) , authorization (Nguoi dung co the lam gi)
-//nguyenkhaan200gmail.com //Validation 

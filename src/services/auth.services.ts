@@ -1,20 +1,14 @@
-import {
-    createPendingUser,
-    activeUser,
-    findUserByEmail,
-    createUser,
-} from "~/services/user.services";
+import UserServices from "~/services/user.services";
 import { decodeToken, encodeToken , createVerifyToken, makeAccessToken , decodeGoogleToken } from "~/services/jwt.services";
 
 import HttpStatus from "~/utlis/statusMap";
 import { compareHash } from "~/utlis/hash";
-import { UserDTO } from "~/types/UserDTO";
 import { findRoles } from "~/services/role.services";
 import prisma from "~/configs/mysqlPrisma.config"
 import { ENV } from "~/configs/env.config";
 async function registerUser(data: any) {
     try {
-        //name , email , avatar , password , phone , address , avatar
+        //name , email , avatar , password , phone , address , avatar (optional) 
         const {email , password} = data 
         if (!email || !password)
             return {
@@ -23,15 +17,15 @@ async function registerUser(data: any) {
                 httpStatus: HttpStatus.BAD_REQUEST,
             };
         //Check if user exists 
-        const isUser = await findUserByEmail(email)  
+        const isUser = await UserServices.findUserByEmail(email)  
         if (isUser) 
             return {
                 message: "You are already a user", 
                 success: false, 
                 httpStatus: HttpStatus.CONFLICT 
             }
-        //Create pending user v
-        const pendingUser = await createPendingUser(data);
+        //Create pending user  
+        const pendingUser = await UserServices.createPendingUser(data);
         if (pendingUser) {
             const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 
             return {
@@ -74,7 +68,7 @@ async function verifyUser(token: string) {
         //Viet them ham vao cho user-services: Lay thong tin cu the ve 1 nguoi dung dua tren userID, Trong ham utlist thi viet 1 ham de xac dinh trang thai nguoi dung de chan logic
         const userID = result.userID;
         const email = result.email;
-        const verifyResult = await activeUser(userID, email);
+        const verifyResult = await UserServices.activeUser(userID, email);
         if (!verifyResult)
             return {
                 message: "User has not been recognized",
@@ -95,12 +89,13 @@ async function verifyUser(token: string) {
 async function loginUser(userID : number , email : string , password : string) 
 {
     const hashedPassword = await prisma.user.findFirst({
-        where: {id : userID}, 
+        where: {id : userID}, // dong bo ten bien thanh id
         select: {
             password: true 
         }
     })
-    const isPassword = compareHash(password , hashedPassword?.password as string) 
+    console.log('>>useloginID: ' , userID , ' user email ' , email , ' password ' , password)
+    const isPassword = await compareHash(password , hashedPassword?.password as string) 
     if (!isPassword) 
         return {
             success: false, 
@@ -126,7 +121,9 @@ async function refreshAccessToken(userID : number , email : string)
 {
     const roles = await findRoles(userID) 
     const access_token = makeAccessToken({
-        userID , email , roles
+        id :userID ,
+        email ,
+        roles
     }) 
     return {
         success: true, 
@@ -192,7 +189,7 @@ async function loginGoogle(code: string) {
 
     // 4. Nếu chưa có  tạo user mới
     if (!user) {
-        user = await createUser({
+        user = await UserServices.createUser({
             name : name as string , email : email as string,  
             avatar : picture as string 
         })
