@@ -15,6 +15,7 @@ CREATE TABLE `User` (
     `address` VARCHAR(191) NULL,
     `avatar` VARCHAR(191) NULL DEFAULT 'https://www.svgrepo.com/show/452030/avatar-default.svg',
     `verify` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -25,7 +26,7 @@ CREATE TABLE `Cart` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userID` INTEGER NOT NULL,
 
-    UNIQUE INDEX `cart_userID_key`(`userID`),
+    UNIQUE INDEX `Cart_userID_key`(`userID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -36,8 +37,10 @@ CREATE TABLE `Product` (
     `description` VARCHAR(191) NOT NULL,
     `price` DECIMAL(65, 30) NOT NULL,
     `active` BOOLEAN NOT NULL,
-    `thumbnail` VARCHAR(191) NOT NULL,
+    `thumbnail` VARCHAR(191) NOT NULL DEFAULT 'https://static.thenounproject.com/png/5191452-200.png',
     `brandID` INTEGER NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `discount` DECIMAL(65, 30) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -105,7 +108,7 @@ CREATE TABLE `Color` (
 -- CreateTable
 CREATE TABLE `Size` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
+    `value` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -127,7 +130,7 @@ CREATE TABLE `UserRole` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `cart` ADD CONSTRAINT `cart_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Cart` ADD CONSTRAINT `Cart_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_brandID_fkey` FOREIGN KEY (`brandID`) REFERENCES `Brand`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
