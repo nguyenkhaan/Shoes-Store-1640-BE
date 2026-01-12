@@ -89,17 +89,12 @@ async function createOrder(userID: number, data: CreateOrderDTO) {
               productVariant: {
                 select: {
                   id: true,
+                  size: true, 
                   product: {
                     select: {
                       id: true,
                       name: true,
                       thumbnail: true,
-                    },
-                  },
-                  size: {
-                    select: {
-                      id: true,
-                      value: true,
                     },
                   },
                   color: {
@@ -171,17 +166,12 @@ async function getOrdersByUser(userID: number) {
             productVariant: {
               select: {
                 id: true,
+                size: true, 
                 product: {
                   select: {
                     id: true,
                     name: true,
                     thumbnail: true,
-                  },
-                },
-                size: {
-                  select: {
-                    id: true,
-                    value: true,
                   },
                 },
                 color: {
@@ -254,17 +244,12 @@ async function getOrderByID(orderID: number, userID?: number) {
             productVariant: {
               select: {
                 id: true,
+                size: true, 
                 product: {
                   select: {
                     id: true,
                     name: true,
                     thumbnail: true,
-                  },
-                },
-                size: {
-                  select: {
-                    id: true,
-                    value: true,
                   },
                 },
                 color: {

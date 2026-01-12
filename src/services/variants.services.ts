@@ -2,6 +2,9 @@ import prisma from "~/configs/mysqlPrisma.config";
 import HttpStatus from "~/utlis/statusMap";
 import { VariantCreateData, VariantUpdateData } from "~/types/VariantsDTO";
 
+//File nay dang bi loi rat nhieu, size luc nay la 1 bien so nguyen, khong con la bang rieng nua nen fix lai cho nay 
+
+
 // Tạo variant (hỗ trợ tạo 1 hoặc nhiều)
 async function createVariant(
   productID: number,
@@ -26,7 +29,7 @@ async function createVariant(
     const colorIDs = [...new Set(variants.map((v) => v.colorID))];
 
     const [sizes, colors] = await Promise.all([
-      prisma.size.findMany({ where: { id: { in: sizeIDs } } }),
+      // prisma.size.findMany({ where: { id: { in: sizeIDs } } }),
       prisma.color.findMany({ where: { id: { in: colorIDs } } }),
     ]);
 

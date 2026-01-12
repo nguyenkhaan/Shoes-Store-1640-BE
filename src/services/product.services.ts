@@ -83,18 +83,13 @@ async function getAllProducts() {
         productVariants: {
           select: {
             id: true,
+            size: true, 
             quantity: true,
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
@@ -142,17 +137,12 @@ async function getAllProductsAdmin() {
           select: {
             id: true,
             quantity: true,
+            size: true, 
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
@@ -200,18 +190,13 @@ async function getProductByID(id: number) {
         productVariants: {
           select: {
             id: true,
+            size: true, 
             quantity: true,
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
@@ -297,18 +282,13 @@ async function updateProduct(id: number, data: ProductDTO) {
         productVariants: {
           select: {
             id: true,
+            size: true, 
             quantity: true,
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
@@ -407,17 +387,12 @@ async function searchProducts(query: string) {
           select: {
             id: true,
             quantity: true,
+            size: true, 
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
@@ -475,18 +450,13 @@ async function getProductsByBrand(brandID: number) {
         productVariants: {
           select: {
             id: true,
+            size: true, 
             quantity: true,
             color: {
               select: {
                 id: true,
                 name: true,
                 hex: true,
-              },
-            },
-            size: {
-              select: {
-                id: true,
-                value: true,
               },
             },
           },
