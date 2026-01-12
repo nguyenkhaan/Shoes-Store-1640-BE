@@ -86,12 +86,11 @@ model ProductVariant {
   id         Int         @id @default(autoincrement())
   product    Product     @relation(fields: [productID], references: [id])
   productID  Int
-  size       Size        @relation(fields: [sizeID], references: [id])
-  sizeID     Int
   color      Color       @relation(fields: [colorID], references: [id])
   colorID    Int
   quantity   Int
   orderItems OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
+  size       Int         @default(0)
 }
 
 model Brand {
@@ -104,12 +103,6 @@ model Color {
   id              Int              @id @default(autoincrement())
   name            String
   hex             String
-  productVariants ProductVariant[]
-}
-
-model Size {
-  id              Int              @id @default(autoincrement())
-  value           Int
   productVariants ProductVariant[]
 }
 

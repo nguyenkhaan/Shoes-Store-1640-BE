@@ -69,6 +69,7 @@ async function main() {
   }
 
   //Ham dung de tao nhanh kich thuoc
+  /*
   const MIN_SIZE = 20;
   const MAX_SIZE = 42;
 
@@ -81,7 +82,7 @@ async function main() {
     data: sizes,
     skipDuplicates: true, // Skip nếu size đã tồn tại
   });
-
+*/ 
   // Tạo các màu phổ biến
   const colors = [
     { name: "Đen", hex: "#000000" },

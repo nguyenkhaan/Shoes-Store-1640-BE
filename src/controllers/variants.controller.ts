@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import HttpStatus from "~/utlis/statusMap";
 import * as productVariantService from "~/services/variants.services";
 
+
+//Chinh sua lai file variants nay nhan, bay gio size da tro thanh 1 truong Integer trong bang variants roi  
+
+
 class ProductVariant {
   // Tạo variant cho sản phẩm (Hỗ trợ 1 hoặc nhiều)
   static async createVariant(req: Request, res: Response) {
