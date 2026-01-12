@@ -128,7 +128,7 @@ class User {
                     message: "User not found." 
                 });
             }
-
+            user.avatar = await Cloudian.getImageUrl(user.avatar as string) 
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Profile retrieved successfully.",
