@@ -118,7 +118,8 @@ class User {
                     phone: true,
                     address: true,
                     avatar: true,
-                    userRoles: true
+                    userRoles: true, 
+                    createdAt: true //Ep du lieu thanh ISO string 
                 }
             });
             
