@@ -8,13 +8,13 @@
 | **/api/auth/refresh-token** | `GET` | `verifyRefreshToken` | | `{ success, message, accessToken }` |
 | **/api/auth/logout** | `POST` | | | `{ success, message }` |
 | **/api/auth/login-google** | `POST` | `requireFields(["code"])` | `body: { code }` | `{ success, accessToken, refreshToken }` |
-| **/api/user/forgot-password** | `POST` | `credentials`, `requireFields(["email"])`, `checkUserStatusByEmail()` | `body: { email }` | `{ success, message, token }` |
-| **/api/user/reset-password** | `POST` | `credentials`, `requireFields(["email", "token", "password"])`, `Validation.email`, `Validation.password`, `checkUserStatusByEmail()`, `verifyResetPasswordToken` | `body: { email, token, password }` | `{ success, message }` |
+| **/api/user/forgot-password (Step 1)** | `POST` | `credentials`, `requireFields(["email"])`, `checkUserStatusByEmail()` | `body: { email }` | `{ success, message, token }` |
+| **/api/user/reset-password (Step 2)** | `POST` | `credentials`, `requireFields(["email", "token", "password"])`, `Validation.email`, `Validation.password`, `checkUserStatusByEmail()`, `verifyResetPasswordToken` | `body: { email, token, password }` | `{ success, message }` |
 | **/api/user/profile** | `GET` | `credentials` | | `{ success, message, data: { id, name, email, phone, address, avatar, userRoles, createdAt } }` |
 | **/api/user/update-profile** | `PATCH` | `credentials`, `requireFields(["name", "phone"])` | `body: { name, phone, address }` | `{ success, message, data: { id, name, email, phone, address, avatar, userRoles, createdAt } }` |
 | **/api/user/update-avatar** | `PATCH` | `credentials`, `requireFields(["image_id"])` | `body: { image_id }` | `{ success, message, data: { avatar, url } }` |
-| **/api/user/change-email** | `POST` | `credentials`, `requireFields(["email", "password"])`, `Validation.email`, `Validation.password` | `body: { email, password }` | `{ success, message, token }` |
-| **/api/user/reset-email** | `POST` | `credentials`, `requireFields(["email", "token"])`, `verifyResetEmailToken` | `body: { email, token }` | `{ success, message }` |
+| **/api/user/change-email (Step 1)** | `POST` | `credentials`, `requireFields(["email", "password"])`, `Validation.email`, `Validation.password` | `body: { email (new), password (current) }` | `{ success, message, token }` |
+| **/api/user/reset-email (Step 2)** | `POST` | `credentials`, `requireFields(["email", "token"])`, `verifyResetEmailToken` | `body: { email (new), token }` | `{ success, message }` |
 | **/api/admin/forgot-password** | `GET` | | `query: { email }` | `{ success, message, token }` |
 | **/api/brands** | `GET` | | | `{ success, message, data: [{ id, name }] }` |
 | **/api/brands/:id** | `GET` | `Validation.numberIDParam` | `params: { id }` | `{ success, message, data: { id, name } }` |
