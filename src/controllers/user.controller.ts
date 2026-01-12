@@ -118,7 +118,8 @@ class User {
                     phone: true,
                     address: true,
                     avatar: true,
-                    userRoles: true
+                    userRoles: true, 
+                    createdAt: true //Ep du lieu thanh ISO string 
                 }
             });
             
@@ -128,7 +129,7 @@ class User {
                     message: "User not found." 
                 });
             }
-
+            user.avatar = await Cloudian.getImageUrl(user.avatar as string) 
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Profile retrieved successfully.",
@@ -166,7 +167,7 @@ class User {
             const updatedUser = await prisma.user.update({
                 where: { id: Number(userID) },
                 data: { avatar: avatarPublicId }
-            });
+            });  //
 
             return res.status(HttpStatus.OK).json({
                 success: true,

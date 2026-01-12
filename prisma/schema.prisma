@@ -29,6 +29,7 @@ model User {
   userRoles UserRole[]
   carts     Cart?
   orders    Order[]
+  createdAt DateTime   @default(now())
 }
 
 //Mot nguoi dung co nhieu gio hang, userID, productID, id, userID , userId
@@ -48,6 +49,9 @@ model Product {
   brand           Brand            @relation(fields: [brandID], references: [id])
   brandID         Int
   productVariants ProductVariant[]
+  //category String ["trending","popular","freeship"], discount 
+  category        String //Moi bo sung 
+  discount        Decimal //Moi bo sung 
 }
 
 model Order {
@@ -73,7 +77,7 @@ model OrderItem {
   quantity         Int
   price            Decimal
   productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
-  productVariantID Int
+  productVariantID Int //Fix lai thanh product 
   order            Order          @relation(fields: [orderID], references: [id])
   orderID          Int
 }
@@ -87,7 +91,7 @@ model ProductVariant {
   color      Color       @relation(fields: [colorID], references: [id])
   colorID    Int
   quantity   Int
-  orderItems OrderItem[]
+  orderItems OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
 }
 
 model Brand {

@@ -26,6 +26,8 @@ async function createProduct(data: ProductDTO) {
         active: data.active,
         thumbnail: data.thumbnail,
         brandID: data.brandID,
+        discount: 0,    //Chinh sua truong nay lai nhan dung, ben FE se gui ve cai nay a 
+        category: '' //Chinh sua 2 truong nay lai nhan dung, ben FE se gui ve cai nay a 
       },
       select: {
         id: true,
@@ -42,7 +44,6 @@ async function createProduct(data: ProductDTO) {
         },
       },
     });
-
     return {
       success: true,
       message: "Product created successfully",

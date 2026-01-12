@@ -30,7 +30,7 @@ async function main() {
         password: hashedAdminPassword,
         phone: "0",
         verify: true,
-      },
+      }
     });
 
     await prisma.userRole.createMany({
