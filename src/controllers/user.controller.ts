@@ -166,7 +166,7 @@ class User {
             const updatedUser = await prisma.user.update({
                 where: { id: Number(userID) },
                 data: { avatar: avatarPublicId }
-            });
+            });  //
 
             return res.status(HttpStatus.OK).json({
                 success: true,
