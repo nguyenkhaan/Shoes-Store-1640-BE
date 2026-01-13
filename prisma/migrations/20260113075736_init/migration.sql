@@ -37,9 +37,9 @@ CREATE TABLE `Product` (
     `description` VARCHAR(191) NOT NULL,
     `price` DECIMAL(65, 30) NOT NULL,
     `active` BOOLEAN NOT NULL,
-    `thumbnail` VARCHAR(191) NOT NULL DEFAULT 'https://static.thenounproject.com/png/5191452-200.png',
+    `thumbnail` JSON NOT NULL,
     `brandID` INTEGER NOT NULL,
-    `category` VARCHAR(191) NOT NULL,
+    `category` JSON NOT NULL,
     `discount` DECIMAL(65, 30) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -85,6 +85,7 @@ CREATE TABLE `ProductVariant` (
     `quantity` INTEGER NOT NULL,
     `size` INTEGER NOT NULL DEFAULT 0,
 
+    UNIQUE INDEX `ProductVariant_productID_size_colorID_key`(`productID`, `size`, `colorID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

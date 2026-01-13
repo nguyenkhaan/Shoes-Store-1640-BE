@@ -9,6 +9,7 @@ import CartRoute from "~/routes/cart/route"
 import ImageRouter from "~/routes/image.route";
 import paymentRoute from "~/routes/payment/route";
 import ProductRoute from "~/routes/product/route"
+import ProductVarientRoute from "~/routes/variant/route"
 const api = Router().use('/auth' , AuthRoute) 
 //Admin route 
 api.use('/admin' , AdminRoute)
@@ -21,4 +22,5 @@ api.use('/', ImageRouter)   //Cai nay dung de test chuc nang upload anh. Sau khi
 api.use('/cart' , CartRoute)
 api.use('/payment', paymentRoute);
 api.use('/product', ProductRoute)
+api.use('/variant' , ProductVarientRoute)
 export default Router().use("/api", api);

@@ -6,25 +6,24 @@ import * as productVariantService from "~/services/variants.services";
 //Chinh sua lai file variants nay nhan, bay gio size da tro thanh 1 truong Integer trong bang variants roi  
 
 
-class ProductVariant {
+class ProductVariant {   
   // Tạo variant cho sản phẩm (Hỗ trợ 1 hoặc nhiều)
   static async createVariant(req: Request, res: Response) {
-    const { productID, sizeID, colorID, quantity, variants } = req.body;
-
+    const {productID , size , colorID , quantity , variants} = req.body 
     let variantsToCreate = [];
 
     if (Array.isArray(variants)) {
       // Trường hợp gửi mảng variants
       variantsToCreate = variants.map((v: any) => ({
-        sizeID: Number(v.sizeID),
+        size: Number(v.size),
         colorID: Number(v.colorID),
         quantity: Number(v.quantity),
       }));
-    } else if (sizeID && colorID && quantity) {
+    } else if (size && colorID && quantity) {
       // Trường hợp gửi 1 variant lẻ ở body
       variantsToCreate = [
         {
-          sizeID: Number(sizeID),
+          size: Number(size),
           colorID: Number(colorID),
           quantity: Number(quantity),
         },
@@ -32,7 +31,7 @@ class ProductVariant {
     } else {
       return res.status(HttpStatus.BAD_REQUEST).json({
         success: false,
-        message: "Missing variant details (either sizeID, colorID, quantity or variants array)",
+        message: "Missing variant details (either size, colorID, quantity or variants array)",
       });
     }
 
@@ -44,7 +43,7 @@ class ProductVariant {
   }
 
   // Lấy tất cả variants (Admin)
-  static async getAllVariants(req: Request, res: Response) {
+  static async getAllVariants(req: Request, res: Response) {   //public 
     const responseData = await productVariantService.getAllVariants();
 
     if (responseData) return res.status(responseData.httpStatus).json(responseData);
@@ -53,7 +52,7 @@ class ProductVariant {
   }
 
   // Lấy tất cả variants của 1 sản phẩm
-  static async getVariantsByProduct(req: Request, res: Response) {
+  static async getVariantsByProduct(req: Request, res: Response) {   //get by id 
     const productID = Number(req.params.productID);
     const responseData = await productVariantService.getVariantsByProduct(productID);
 
@@ -75,9 +74,9 @@ class ProductVariant {
   // Cập nhật variant
   static async updateVariant(req: Request, res: Response) {
     const id = Number(req.params.id);
-    const { sizeID, colorID, quantity } = req.body;
+    const { size, colorID, quantity } = req.body;
     const updateData: any = {};
-    if (sizeID !== undefined) updateData.sizeID = Number(sizeID);
+    if (size !== undefined) updateData.size = Number(size);
     if (colorID !== undefined) updateData.colorID = Number(colorID);
     if (quantity !== undefined) updateData.quantity = Number(quantity);
 

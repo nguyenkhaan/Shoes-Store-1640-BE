@@ -1,12 +1,12 @@
 export interface VariantCreateData {
   productID: number;
-  sizeID: number;
+  size: number;
   colorID: number;
   quantity: number;
 }
 
 export interface VariantUpdateData {
-  sizeID?: number;
+  size?: number;
   colorID?: number;
   quantity?: number;
 }
@@ -14,7 +14,7 @@ export interface VariantUpdateData {
 export interface VariantBulkCreateData {
   productID: number;
   variants: Array<{
-    sizeID: number;
+    size: number;
     colorID: number;
     quantity: number;
   }>;

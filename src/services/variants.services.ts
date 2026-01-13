@@ -8,7 +8,7 @@ import { VariantCreateData, VariantUpdateData } from "~/types/VariantsDTO";
 // Tạo variant (hỗ trợ tạo 1 hoặc nhiều)
 async function createVariant(
   productID: number,
-  variants: Array<{ sizeID: number; colorID: number; quantity: number }>
+  variants: Array<{ size: number; colorID: number; quantity: number }>
 ) {
   try {
     // Kiểm tra product tồn tại
@@ -25,22 +25,40 @@ async function createVariant(
     }
 
     // Lấy tất cả size và color IDs để validate
-    const sizeIDs = [...new Set(variants.map((v) => v.sizeID))];
-    const colorIDs = [...new Set(variants.map((v) => v.colorID))];
-
-    const [sizes, colors] = await Promise.all([
-      // prisma.size.findMany({ where: { id: { in: sizeIDs } } }),
-      prisma.color.findMany({ where: { id: { in: colorIDs } } }),
-    ]);
-
-    // Validate
-    if (sizes.length !== sizeIDs.length) {
+    const colorIDs = [...new Set(variants.map((v) => v.colorID))];   //Lay danh sach color gui ve 
+    
+    
+    //Validate size 
+    const invalidSize = variants.some(
+      (variant) => typeof variant.size !== "number" || variant.size <= 0
+    );
+    if (invalidSize) {
       return {
         success: false,
-        message: "One or more sizes not found",
-        httpStatus: HttpStatus.NOT_FOUND,
+        message: "Invalid size value",
+        httpStatus: HttpStatus.BAD_REQUEST,
       };
     }
+    //Validate quantity 
+    const invalidQuantity = variants.some(
+      v => typeof v.quantity !== "number" || v.quantity < 0
+    );
+    
+    if (invalidQuantity) {
+      return {
+        success: false,
+        message: "Invalid quantity value",
+        httpStatus: HttpStatus.BAD_REQUEST,
+      };
+    }
+    //Validate colors     
+    const colors = await prisma.color.findMany({
+      where: {
+        id : {
+          in : colorIDs
+        }
+      }
+    })
 
     if (colors.length !== colorIDs.length) {
       return {
@@ -49,12 +67,12 @@ async function createVariant(
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
-
+    
     // Tạo variants (sử dụng createMany để tối ưu)
     const createdVariants = await prisma.productVariant.createMany({
       data: variants.map((v) => ({
         productID,
-        sizeID: v.sizeID,
+        size: v.size, 
         colorID: v.colorID,
         quantity: v.quantity,
       })),
@@ -75,12 +93,7 @@ async function createVariant(
       select: {
         id: true,
         quantity: true,
-        size: {
-          select: {
-            id: true,
-            value: true,
-          },
-        },
+        size: true, 
         color: {
           select: {
             id: true,
@@ -120,12 +133,7 @@ async function getAllVariants() {
             name: true,
           },
         },
-        size: {
-          select: {
-            id: true,
-            value: true,
-          },
-        },
+        size: true, 
         color: {
           select: {
             id: true,
@@ -173,12 +181,7 @@ async function getVariantsByProduct(productID: number) {
       select: {
         id: true,
         quantity: true,
-        size: {
-          select: {
-            id: true,
-            value: true,
-          },
-        },
+        size: true, 
         color: {
           select: {
             id: true,
@@ -219,12 +222,7 @@ async function getVariantByID(id: number) {
             name: true,
           },
         },
-        size: {
-          select: {
-            id: true,
-            value: true,
-          },
-        },
+        size: true, 
         color: {
           select: {
             id: true,
@@ -275,15 +273,13 @@ async function updateVariant(id: number, data: VariantUpdateData) {
     }
 
     // Nếu update size hoặc color, kiểm tra tồn tại
-    if (data.sizeID) {
-      const size = await prisma.size.findUnique({ where: { id: data.sizeID } });
-      if (!size) {
+    if (data.size !== undefined) {
+      if (data.size <= 0 || typeof data.size !== 'number')
         return {
           success: false,
-          message: "Size not found",
+          message: "Invalid size",
           httpStatus: HttpStatus.NOT_FOUND,
         };
-      }
     }
 
     if (data.colorID) {
@@ -309,12 +305,7 @@ async function updateVariant(id: number, data: VariantUpdateData) {
             name: true,
           },
         },
-        size: {
-          select: {
-            id: true,
-            value: true,
-          },
-        },
+        size: true, 
         color: {
           select: {
             id: true,

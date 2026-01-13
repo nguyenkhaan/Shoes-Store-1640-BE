@@ -45,12 +45,12 @@ model Product {
   description     String
   price           Decimal
   active          Boolean
-  thumbnail       String           @default("https://static.thenounproject.com/png/5191452-200.png")
+  thumbnail       Json
   brand           Brand            @relation(fields: [brandID], references: [id])
   brandID         Int
   productVariants ProductVariant[]
   //category String ["trending","popular","freeship"], discount 
-  category        String //Moi bo sung 
+  category        Json
   discount        Decimal //Moi bo sung 
 }
 
@@ -91,6 +91,8 @@ model ProductVariant {
   quantity   Int
   orderItems OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
   size       Int         @default(0)
+
+  @@unique([productID, size, colorID])
 }
 
 model Brand {

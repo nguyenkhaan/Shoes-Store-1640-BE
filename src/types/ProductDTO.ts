@@ -6,6 +6,8 @@ export interface ProductDTO {
   active: boolean;
   brandID: number;
   price: number;
-  thumbnail: string;
+  thumbnail: string[];
+  category?: string[]; 
+  discount?: number; 
 }
 export default ProductDTO;

@@ -67,22 +67,6 @@ async function main() {
       },
     });
   }
-
-  //Ham dung de tao nhanh kich thuoc
-  /*
-  const MIN_SIZE = 20;
-  const MAX_SIZE = 42;
-
-  const sizes = Array.from({ length: MAX_SIZE - MIN_SIZE + 1 }, (_, i) => {
-    const size = MIN_SIZE + i;
-    return { value: size };
-  });
-
-  await prisma.size.createMany({
-    data: sizes,
-    skipDuplicates: true, // Skip nếu size đã tồn tại
-  });
-*/ 
   // Tạo các màu phổ biến
   const colors = [
     { name: "Đen", hex: "#000000" },

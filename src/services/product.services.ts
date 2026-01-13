@@ -2,7 +2,8 @@ import prisma from "~/configs/mysqlPrisma.config";
 import HttpStatus from "~/utlis/statusMap";
 import { ProductDTO } from "~/types/ProductDTO";
 import { Prisma } from "generated/prisma/edge";
-
+import Cloudian from "~/services/cloudinary.services";
+import mapThumbnail from "~/utlis/mapThumbnail";
 // Tạo sản phẩm mới
 async function createProduct(data: ProductDTO) {
   try {
@@ -24,10 +25,10 @@ async function createProduct(data: ProductDTO) {
         description: data.description,
         price: new Prisma.Decimal(data.price.toString()),
         active: data.active,
-        thumbnail: data.thumbnail,
+        thumbnail: data.thumbnail || ['default_img'],
         brandID: data.brandID,
-        discount: 0,    //Chinh sua truong nay lai nhan dung, ben FE se gui ve cai nay a 
-        category: '' //Chinh sua 2 truong nay lai nhan dung, ben FE se gui ve cai nay a 
+        discount: data.discount || 0,     
+        category: data.category || []  
       },
       select: {
         id: true,
@@ -35,7 +36,9 @@ async function createProduct(data: ProductDTO) {
         description: true,
         price: true,
         active: true,
-        thumbnail: true,
+        thumbnail: true,  //Danh sach cac public id 
+        discount: true, 
+        category: true, 
         brand: {
           select: {
             id: true,
@@ -44,11 +47,16 @@ async function createProduct(data: ProductDTO) {
         },
       },
     });
+    //Tranform thumbnail into {} public_id and url 
+    const thumnails = mapThumbnail(product.thumbnail)
     return {
       success: true,
       message: "Product created successfully",
       httpStatus: HttpStatus.CREATED,
-      data: product,
+      data: {
+        ...product, 
+        thumbnail : thumnails
+      },
     };
   } catch (error) {
     console.error(">>> Create product error:", error);
@@ -74,6 +82,8 @@ async function getAllProducts() {
         price: true,
         active: true,
         thumbnail: true,
+        discount: true, 
+        category: true, 
         brand: {
           select: {
             id: true,
@@ -99,12 +109,15 @@ async function getAllProducts() {
         id: "desc",
       },
     });
-
+    const formattedProducts = products.map((p) => ({
+      ...p,
+      thumbnail: mapThumbnail(p.thumbnail) 
+    }));
     return {
       success: true,
       message: "Get all products successfully",
       httpStatus: HttpStatus.OK,
-      data: products,
+      data: formattedProducts,
     };
   } catch (error) {
     console.error(">>> Get products error:", error);
@@ -127,6 +140,8 @@ async function getAllProductsAdmin() {
         price: true,
         active: true,
         thumbnail: true,
+        discount: true, 
+        category: true, 
         brand: {
           select: {
             id: true,
@@ -153,11 +168,17 @@ async function getAllProductsAdmin() {
       },
     });
 
+    //Trasnform 
+    const formattedProducts = products.map((p) => ({
+      ...p,
+      thumbnail: mapThumbnail(p.thumbnail)
+    }));
+
     return {
       success: true,
       message: "Get all products successfully",
       httpStatus: HttpStatus.OK,
-      data: products,
+      data: formattedProducts,
     };
   } catch (error) {
     console.error(">>> Get products error:", error);
@@ -181,6 +202,8 @@ async function getProductByID(id: number) {
         price: true,
         active: true,
         thumbnail: true,
+        discount: true, 
+        category: true, 
         brand: {
           select: {
             id: true,
@@ -211,12 +234,16 @@ async function getProductByID(id: number) {
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
+    const thumnails = mapThumbnail(product.thumbnail)
 
     return {
       success: true,
       message: "Get product successfully",
       httpStatus: HttpStatus.OK,
-      data: product,
+      data: {
+        ...product, 
+        thumbnail: thumnails
+      },
     };
   } catch (error) {
     console.error(">>> Get product by ID error:", error);
@@ -229,7 +256,8 @@ async function getProductByID(id: number) {
 }
 
 // Cập nhật sản phẩm
-async function updateProduct(id: number, data: ProductDTO) {
+async function updateProduct(id: number, data: ProductDTO , add_public_ids : string[] , remove_public_ids: string[]) 
+{
   try {
     const existingProduct = await prisma.product.findUnique({
       where: { id },
@@ -242,7 +270,12 @@ async function updateProduct(id: number, data: ProductDTO) {
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
-
+    const images = Array.from(new Set ([
+      ...add_public_ids, 
+      ...(existingProduct.thumbnail as string[]).filter((s) => {
+      return !(remove_public_ids.includes(s)) 
+      })
+    ])) 
     // Nếu có brandID, kiểm tra brand có tồn tại không
     if (data.brandID) {
       const brand = await prisma.brand.findUnique({
@@ -257,8 +290,10 @@ async function updateProduct(id: number, data: ProductDTO) {
         };
       }
     }
-
+    //Chinh sua lai thumbnails trong products 
+    
     const updateData: any = { ...data };
+    updateData.thumbnail = images 
     if (data.price !== undefined) {
       updateData.price = new Prisma.Decimal(data.price.toString());
     }
@@ -273,6 +308,8 @@ async function updateProduct(id: number, data: ProductDTO) {
         price: true,
         active: true,
         thumbnail: true,
+        discount: true, 
+        category: true, 
         brand: {
           select: {
             id: true,
@@ -295,12 +332,15 @@ async function updateProduct(id: number, data: ProductDTO) {
         },
       },
     });
-
+    const formattedProduct = {
+      ...updatedProduct,
+      thumbnail: mapThumbnail(updatedProduct.thumbnail),
+    };
     return {
       success: true,
       message: "Product updated successfully",
       httpStatus: HttpStatus.OK,
-      data: updatedProduct,
+      data: formattedProduct,
     };
   } catch (error) {
     console.error(">>> Update product error:", error);
@@ -326,7 +366,8 @@ async function deleteProduct(id: number) {
         httpStatus: HttpStatus.NOT_FOUND,
       };
     }
-
+    const public_ids = existingProduct.thumbnail 
+    await Cloudian.dropImageMany(public_ids as string[]) 
     await prisma.$transaction([
       prisma.productVariant.deleteMany({
         where: { productID: id },
@@ -377,6 +418,8 @@ async function searchProducts(query: string) {
         price: true,
         active: true,
         thumbnail: true,
+        category: true, 
+        discount: true, 
         brand: {
           select: {
             id: true,
