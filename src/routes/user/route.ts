@@ -21,14 +21,12 @@ const router = Router();
 //Public
 router.post(
     "/forgot-password",
-    credentials, // Nay la public nen khong can xac thuc
     requireFields(["email"]),
     checkUserStatusByEmail(),
     User.forgotPassword
 );
 router.post(
     "/reset-password",
-    credentials, // nay la public nen khong can xac thuc
     requireFields(["email", "token", "password"]),
     Validation.email,
     Validation.password,
