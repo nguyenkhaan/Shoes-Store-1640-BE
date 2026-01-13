@@ -17,7 +17,7 @@ export const createPayment = async (orderID: number, paymentMethod: string) => {
         let newStatus = "PROCESSING";
         if (paymentMethod.toUpperCase() === "COD") {
             newStatus = "PENDING_PAYMENT"; // Cho giao hang moi thanh toan
-        } else if (paymentMethod.toUpperCase() === "CREDIT CARD") {
+        } else if (paymentMethod.toUpperCase() === "CREDIT_CARD") {
             newStatus = "PAID"; // Thanh toan qua roi qua credit card
         }
 

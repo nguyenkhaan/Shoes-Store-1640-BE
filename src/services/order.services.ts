@@ -17,13 +17,14 @@ async function createOrder(userID: number, data: CreateOrderDTO) {
     }
 
     // Lấy thông tin các variants
-    const variantIDs = data.items.map((item) => item.productVariantID);
+    const variantIDs = [...new Set(...[data.items.map((item) => item.productVariantID)])] 
     const variants = await prisma.productVariant.findMany({
       where: { id: { in: variantIDs } },
       include: {
         product: true,
       },
     });
+  
 
     // Kiểm tra tất cả variants có tồn tại không
     if (variants.length !== variantIDs.length) {

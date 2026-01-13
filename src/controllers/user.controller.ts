@@ -71,8 +71,14 @@ class User {
     // Cap nhat profile nguoi dung
     static updateProfile = async (req: any, res: any) => {
         try {
-            const { name, phone, address } = req.body;
+            if (!req.body) 
+                return res.status(HttpStatus.BAD_REQUEST).json({
+                    success: false, 
+                    message: "Body is missing. Add a body to request", 
 
+                }) 
+            const { name, phone, address } = req.body;
+            
             // Lay userID tu token
             const userId = req.user.id || req.user.userID; // tranh bi undefined
 
@@ -82,9 +88,13 @@ class User {
                     message: "Unauthorized: User ID not found." 
                 });
             }
-
+            const updateData : any = {} 
+            if (name) updateData.name = name 
+            if (phone) updateData.phone = phone 
+            if (address) updateData.address = address
             // Cap nhat thong tin nguoi dung
-            const updatedUser = await UserServices.updateUser(Number(userId), { name, phone, address });
+            console.log(updateData)
+            const updatedUser = await UserServices.updateUser(Number(userId), updateData);
 
             if (updatedUser) {
                 return res.status(HttpStatus.OK).json({
@@ -147,8 +157,7 @@ class User {
     static async updateAvatar(req: Request, res: Response) {   //Ham nay sai -> Su dung multer.single('avatar') 
          //Xem lai cai file a code do trong route/images_route, a co de cho may dua coi cach de lay file anh va upload len cloudianry ma ma?? 
         try {
-            const { userID, avatar } = req.body; // avatar chinh la public_id tren Cloudinary, avatar thi nhan file va tien hanh pdate lenc loudinary, khong phai nhu the nay 
-            const result = await UserServices.updateUser(Number(userID), { avatar });
+            const userID = Number(((req.user) as JwtPayload).userID)// avatar chinh la public_id tren Cloudinary, avatar thi nhan file va tien hanh pdate lenc loudinary, khong phai nhu the nay 
 
             const file = base64File(req.file); 
             
@@ -159,15 +168,25 @@ class User {
                 });
             }
 
+            //Go anh tu cloudinary xuong 
+            const user = await prisma.user.findFirst({
+                where: {
+                    id : userID 
+                } , 
+                select: {avatar : true}
+            })
+            await Cloudian.dropImage(user?.avatar as string)
             // Upload len Cloudinary
             const uploadResult = await Cloudian.uploadImage(file);
             const avatarPublicId = uploadResult.public_id;  
+            //Go avatar trong database xuong khoi cloudinay 
 
             // Update avatar trong database
             const updatedUser = await prisma.user.update({
                 where: { id: Number(userID) },
                 data: { avatar: avatarPublicId }
-            });  //
+            });  // 
+            
 
             return res.status(HttpStatus.OK).json({
                 success: true,

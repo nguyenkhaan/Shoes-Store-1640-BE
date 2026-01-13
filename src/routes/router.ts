@@ -10,6 +10,7 @@ import ImageRouter from "~/routes/image.route";
 import paymentRoute from "~/routes/payment/route";
 import ProductRoute from "~/routes/product/route"
 import ProductVarientRoute from "~/routes/variant/route"
+import OrderRoute from "~/routes/order/route"
 const api = Router().use('/auth' , AuthRoute) 
 //Admin route 
 api.use('/admin' , AdminRoute)
@@ -23,4 +24,5 @@ api.use('/cart' , CartRoute)
 api.use('/payment', paymentRoute);
 api.use('/product', ProductRoute)
 api.use('/variant' , ProductVarientRoute)
+api.use('/order' , OrderRoute)
 export default Router().use("/api", api);

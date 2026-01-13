@@ -4,7 +4,10 @@ import { Router } from "express";
 import User from "~/controllers/user.controller";
 
 import credentials from "~/middlewares/authentication.middlewares";
-import { verifyResetEmailToken, verifyResetPasswordToken } from "~/middlewares/resetAuth.middlewares";
+import {
+    verifyResetEmailToken,
+    verifyResetPasswordToken,
+} from "~/middlewares/resetAuth.middlewares";
 import { requireFields } from "~/middlewares/requiredField.middlewares";
 import {
     checkUserStatusByEmail,
@@ -12,6 +15,7 @@ import {
 } from "~/middlewares/active.middlewares";
 import Validation from "~/middlewares/validation.middlewares";
 import upload from "~/configs/multer.config";
+import { verifyRole } from "~/middlewares/authorization.middlewares";
 const router = Router();
 
 //Public
@@ -57,29 +61,29 @@ router.get(
     credentials, //Authentication
     User.getProfile
 );
-router.patch(
-    "/update-profile",
-    credentials,
-    requireFields(["name", "phone"]),
-    User.updateProfile
-);
+router.patch("/update-profile", credentials, User.updateProfile);
 router.patch(
     "/update-avatar",
-    credentials,
-    requireFields(["image_id"]),
+    upload.single("avatar"),
+    credentials, 
+    verifyRole(["User"]), 
     User.updateAvatar
 ); //Ham update avatar bi sai roi
-router.post("/change-email", 
-  credentials, 
-  requireFields(["email", "password"]), 
-  Validation.email, 
-  Validation.password, 
-  User.lostEmail //Ham nay se tien hanh gui mail 
-); 
-router.post("/reset-email" , 
-  credentials, 
-  requireFields(["email" , "token"]), 
-  verifyResetEmailToken, 
-  User.changeEmail 
-)
+router.post(
+    "/change-email",
+    credentials,
+    verifyRole(["User"]), 
+    requireFields(["email", "password"]),
+    Validation.email,
+    Validation.password,
+    
+    User.lostEmail //Ham nay se tien hanh gui mail
+);
+router.post(
+    "/reset-email",
+    credentials,
+    requireFields(["email", "token"]),
+    verifyResetEmailToken,
+    User.changeEmail
+);
 export default router;
