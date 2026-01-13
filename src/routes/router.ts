@@ -18,7 +18,7 @@ api.use('/user' , UserRoute)
 //Public Route 
 api.use('/colors' , PublicColorRoute)
 api.use('/brands' , PublicBrandRoute)
-api.use('/sizes', PublicSizeRoute)
+// api.use('/sizes', PublicSizeRoute)
 api.use('/', ImageRouter)   //Cai nay dung de test chuc nang upload anh. Sau khi cai dat xong chuc nang upload vao cac noi can thiet thi hay xoa cai nay 
 api.use('/cart' , CartRoute)
 api.use('/payment', paymentRoute);

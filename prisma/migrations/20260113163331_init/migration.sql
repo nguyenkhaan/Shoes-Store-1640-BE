@@ -31,6 +31,17 @@ CREATE TABLE `Cart` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `CartProduct` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `quantity` INTEGER NOT NULL DEFAULT 1,
+    `cartID` INTEGER NOT NULL,
+    `productID` INTEGER NOT NULL,
+
+    UNIQUE INDEX `CartProduct_cartID_productID_key`(`cartID`, `productID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Product` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
@@ -124,6 +135,12 @@ CREATE TABLE `UserRole` (
 
 -- AddForeignKey
 ALTER TABLE `Cart` ADD CONSTRAINT `Cart_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CartProduct` ADD CONSTRAINT `CartProduct_cartID_fkey` FOREIGN KEY (`cartID`) REFERENCES `Cart`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CartProduct` ADD CONSTRAINT `CartProduct_productID_fkey` FOREIGN KEY (`productID`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_brandID_fkey` FOREIGN KEY (`brandID`) REFERENCES `Brand`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
