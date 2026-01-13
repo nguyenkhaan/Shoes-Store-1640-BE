@@ -26,7 +26,7 @@ class Cloudian
             return null 
         }
     }
-    static async getImageUrl(public_id : string) 
+    static getImageUrl(public_id : string) 
     {
         return cloudinary.url(public_id , {
             secure: true 
@@ -62,7 +62,7 @@ class Cloudian
         } 
         return results 
     } 
-    static async getImageUrlMany(public_ids: string[]) 
+    static getImageUrlMany(public_ids: string[]) 
     {
         const results = [] 
         for (const public_id of public_ids) {

@@ -32,6 +32,14 @@ async function main() {
         verify: true,
       }
     });
+    //Tao mot gio hang cho admin 
+    await prisma.cart.create(
+      {
+        data: {
+          userID: admin.id   //Tien hanh tao them 1 gio hang cho admin 
+        }
+      }
+    )
 
     await prisma.userRole.createMany({
       data: [

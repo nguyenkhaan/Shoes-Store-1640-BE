@@ -34,9 +34,21 @@ model User {
 
 //Mot nguoi dung co nhieu gio hang, userID, productID, id, userID , userId
 model Cart {
-  id     Int  @id @default(autoincrement())
-  userID Int  @unique
-  user   User @relation(fields: [userID], references: [id])
+  id           Int           @id @default(autoincrement())
+  userID       Int           @unique
+  user         User          @relation(fields: [userID], references: [id])
+  cartProducts CartProduct[]
+}
+
+model CartProduct {
+  id        Int     @id @default(autoincrement())
+  quantity  Int     @default(1)
+  cart      Cart    @relation(fields: [cartID], references: [id])
+  cartID    Int
+  product   Product @relation(fields: [productID], references: [id])
+  productID Int
+
+  @@unique([cartID, productID])
 }
 
 model Product {
@@ -52,6 +64,7 @@ model Product {
   //category String ["trending","popular","freeship"], discount 
   category        Json
   discount        Decimal //Moi bo sung 
+  cartProducts    CartProduct[]
 }
 
 model Order {

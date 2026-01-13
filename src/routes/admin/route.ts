@@ -11,7 +11,7 @@ import VariantRoute from "~/routes/admin/variant/route";
 import OrderRoute from "~/routes/admin/order/route";
 import Admin from "~/controllers/admin.controller";
 //Public route
-router.get("/forgot-password", Admin.forgotPassword); //Khi goi cai nay thi no se tien hanh gui mail de reset password. Dang test
+// router.get("/forgot-password", Admin.forgotPassword); //Khi goi cai nay thi no se tien hanh gui mail de reset password. Dang test
 
 // Dev bypass auth
 router.use(devBypassAuth, (req, res, next) => {

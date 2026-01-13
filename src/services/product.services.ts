@@ -25,7 +25,7 @@ async function createProduct(data: ProductDTO) {
         description: data.description,
         price: new Prisma.Decimal(data.price.toString()),
         active: data.active,
-        thumbnail: data.thumbnail || ['default_img'],
+        thumbnail: data.thumbnail || ['CloudinaryShoeStore/1f0f0791-4f62-64b0-8d0b-1b8b3ee9bea3'],
         brandID: data.brandID,
         discount: data.discount || 0,     
         category: data.category || []  

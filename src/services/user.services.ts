@@ -34,7 +34,12 @@ class UserServices
             //Assign permission to user 
     
             await assignUserRole(result.id , ["User"])
-    
+            //Tao gio hang cho nguoi dung 
+            await prisma.cart.create({
+                data: {
+                    userID: result.id 
+                }
+            })
             // console.log(' >>> Check thong tin nguoi dung: ' , result)   
             return result
         } 

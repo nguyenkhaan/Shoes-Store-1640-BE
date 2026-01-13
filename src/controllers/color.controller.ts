@@ -43,6 +43,13 @@ export class Color {
 
   static async updateColorByID(req: Request, res: Response) {
     const id = Number(req.params.id)
+    if (!req.body) 
+    {
+      return res.status(HttpStatus.ACCEPTED).json({
+        success: true, 
+        message: "The body is empty" 
+      })
+    }
     const { name, hex } = req.body
     const responseData = await colorService.updateColorByID(id, name , hex)
 
