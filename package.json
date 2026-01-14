@@ -13,7 +13,7 @@
     "prsima:generate": "npx prisma generate",
     "prisma:init": "npx prisma init",
     "prisma:seed": "npx prisma db seed",
-    "setup": "npm install && sudo docker compose down -v && sudo docker compose up -d", 
+    "setup": "npm install && sudo docker compose down -v && sudo docker compose up -d",
     "prism": "npx prisma db push && npx prisma generate && npx prisma db seed"
   },
   "keywords": [],
@@ -25,6 +25,7 @@
     "@prisma/client": "^7.2.0",
     "@prisma/extension-accelerate": "^3.0.1",
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
