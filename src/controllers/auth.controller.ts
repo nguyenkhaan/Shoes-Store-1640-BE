@@ -69,7 +69,9 @@ class Auth
     static async refresh(req : Request , res : Response) 
     {
         //FE tu goi cai end point nay, nguoi dung khong bam gi het 
-        const {userID , email} = (req.body as JwtPayload) 
+        // const {userID , email} = (req.body as JwtPayload) 
+        const userID = ((req.user) as JwtPayload).userID 
+        const email = ((req.user) as JwtPayload).email 
         const responseData = await refreshAccessToken(userID , email) 
         if (responseData) 
             return res.status(responseData.httpStatus).json(responseData);

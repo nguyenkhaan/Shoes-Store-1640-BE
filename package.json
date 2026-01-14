@@ -13,7 +13,8 @@
     "prsima:generate": "npx prisma generate",
     "prisma:init": "npx prisma init",
     "prisma:seed": "npx prisma db seed",
-    "setup": "npm install && docker compose up -d && npx prisma db migrate dev --name init && npx prisma generate && npx prisma db seed"
+    "setup": "npm install && sudo docker compose down -v && sudo docker compose up -d", 
+    "prism": "npx prisma db push && npx prisma generate && npx prisma db seed"
   },
   "keywords": [],
   "author": "",

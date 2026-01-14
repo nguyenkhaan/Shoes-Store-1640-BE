@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Xác thực tài khoản</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
+
+        .email-wrapper {
+            width: 100%;
+            padding: 30px 0;
+        }
+
+        .email-container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 24px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .email-header h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .email-body {
+            padding: 30px;
+        }
+
+        .email-body p {
+            margin: 0 0 16px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .btn-verify {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 14px 28px;
+            background-color: #4f46e5;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .btn-verify:hover {
+            background-color: #4338ca;
+        }
+
+        .expire {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 24px 0;
+        }
+
+        .email-footer {
+            padding: 20px 30px;
+            background-color: #f9fafb;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-container">
+
+        <!-- Header -->
+        <div class="email-header">
+            <h3>Xác thực tài khoản</h3>
+        </div>
+
+        <!-- Body -->
+        <div class="email-body">
+            <p>Xin chào <strong><%= email %></strong>,</p>
+
+            <p>
+                Cảm ơn bạn đã đăng ký tài khoản tại <strong>ShoeStore</strong>.
+                Vui lòng nhấn vào nút bên dưới để xác thực email và hoàn tất đăng ký:
+            </p>
+
+            <div style="text-align: center;">
+                <a href="<%= verifyLink %>" class="btn-verify">
+                    Xác thực tài khoản
+                </a>
+            </div>
+
+            <div class="divider"></div>
+
+            <p>
+                Liên kết này sẽ hết hạn sau
+                <span class="expire"><%= expireMinutes %> phút</span>.
+            </p>
+
+            <p>
+                Nếu bạn không thực hiện đăng ký tài khoản, vui lòng bỏ qua email này.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="email-footer">
+            <p>Đây là email tự động, vui lòng không trả lời.</p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

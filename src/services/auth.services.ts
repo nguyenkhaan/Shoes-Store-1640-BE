@@ -6,46 +6,93 @@ import { compareHash } from "~/utlis/hash";
 import { findRoles } from "~/services/role.services";
 import prisma from "~/configs/mysqlPrisma.config"
 import { ENV } from "~/configs/env.config";
+import renderEmail from "~/utlis/renderEmail";
+import sendEmail from "~/utlis/email";
 async function registerUser(data: any) {
     try {
-        //name , email , avatar , password , phone , address , avatar (optional) 
-        const {email , password} = data 
-        if (!email || !password)
+        //Deadline di dit nen gpt thong cam nhe 
+        const { email, password } = data;
+
+        if (!email || !password) {
             return {
                 message: "Missing information",
                 success: false,
                 httpStatus: HttpStatus.BAD_REQUEST,
             };
-        //Check if user exists 
-        const isUser = await UserServices.findUserByEmail(email)  
-        if (isUser) 
+        }
+
+        const existingUser = await UserServices.findUserByEmail(email);
+
+        // User đã verify → không cho đăng ký lại
+        if (existingUser && existingUser.verify) {
             return {
-                message: "You are already a user", 
-                success: false, 
-                httpStatus: HttpStatus.CONFLICT 
-            }
-        //Create pending user  
-        const pendingUser = await UserServices.createPendingUser(data);
-        if (pendingUser) {
-            const access_token = await createVerifyToken(pendingUser.id , email)   //Tao access_token tam thoi de verifiy nguoi dung 
+                message: "You are already a user",
+                success: false,
+                httpStatus: HttpStatus.CONFLICT,
+            };
+        }
+
+        // User tồn tại nhưng CHƯA verify → gửi lại mail verify
+        if (existingUser && !existingUser.verify) {
+            const token = await createVerifyToken(existingUser.id, email);
+            console.log('>>> Verify TOken: ' , token) 
+            const content = await renderEmail("verifyAccount", {
+                email,
+                verifyLink: `${ENV.FE}/verify-email?token=${token}`,
+                expireMinutes: 5,
+            });
+
+            await sendEmail(
+                "ShoeStore",
+                email,
+                "Verify your account",
+                content
+            );
+
             return {
-                message:
-                    "Register successfully. Please check your email for verify",
+                message: "Verification email resent. Please check your inbox.",
                 success: true,
-                token: access_token,
                 httpStatus: HttpStatus.OK,
             };
         }
+
+        // Tạo user mới (verify = 0)
+        const pendingUser = await UserServices.createPendingUser(data);
+
+        if (pendingUser) {
+            const token = await createVerifyToken(pendingUser.id, email);
+
+            const content = await renderEmail("verifyAccount", {
+                email,
+                verifyLink: `${ENV.FE}/verify-email?token=${token}`,
+                expireMinutes: 5,
+            });
+
+            await sendEmail(
+                "ShoeStore",
+                email,
+                "Verify your account",
+                content
+            );
+
+            return {
+                message: "Register successfully. Please verify your email.",
+                success: true,
+                httpStatus: HttpStatus.OK,
+            };
+        }
+
         return {
-            message: "Register failed. Please try again later",
+            message: "Register failed",
             success: false,
             httpStatus: HttpStatus.BAD_REQUEST,
         };
     } catch (err) {
-        console.log(">>> Register Error: ", err);
+        console.log(">>> Register Error:", err);
         return null;
     }
 }
+
 
 async function verifyUser(token: string) {
     try {
