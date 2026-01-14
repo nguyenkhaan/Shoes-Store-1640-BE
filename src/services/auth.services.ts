@@ -250,7 +250,7 @@ async function loginGoogle(code: string) {
             message : "Internal Server Error", 
             httpStatus : HttpStatus.INTERNAL
         }
-    const roles = findRoles(user.id) 
+    const roles = await findRoles(user.id) 
     const [access_token , refresh_token] = encodeToken({
         userID : user.id , email , name , roles , 
     })
