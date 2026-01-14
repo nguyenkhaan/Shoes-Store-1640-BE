@@ -238,7 +238,10 @@ async function loginGoogle(code: string) {
     if (!user) {
         user = await UserServices.createUser({
             name : name as string , email : email as string,  
-            avatar : picture as string 
+            avatar : picture as string || "https://www.svgrepo.com/show/452030/avatar-default.svg", 
+            phone: '00xx', 
+            address: '', 
+            verify : true 
         })
     }
     if (!user) 
