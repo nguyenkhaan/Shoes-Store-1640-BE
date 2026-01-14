@@ -15,7 +15,7 @@ class CartServices {
             });
             return {
                 success: true,
-                message: "Get all carts successfully",
+                message: "Cart retrieved successfully for the user.",
                 cartID: response?.id,
                 httpStatus: HttpStatus.OK,
             };
@@ -60,7 +60,7 @@ class CartServices {
             });
             return {
                 success: true,
-                message: "delete cart successfullt",
+                message: "delete cart successfully",
                 httpStatus: HttpStatus.OK,
             };
         } catch (err) {
