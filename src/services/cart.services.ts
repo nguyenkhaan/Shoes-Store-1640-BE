@@ -60,7 +60,7 @@ class CartServices {
             });
             return {
                 success: true,
-                message: "delete cart successfullt",
+                message: "delete cart successfully",
                 httpStatus: HttpStatus.OK,
             };
         } catch (err) {

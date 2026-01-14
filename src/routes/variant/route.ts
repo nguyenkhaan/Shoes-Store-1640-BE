@@ -8,4 +8,4 @@ router.get('/' , credentials , verifyRole(["User"]) , ProductVariant.getAllVaria
 router.get('/get-by-product/:id' , credentials , verifyRole(["User"]) , ProductVariant.getVariantsByProduct) 
 router.get('/get-by-id/:id' , credentials , verifyRole(["User"]) , ProductVariant.getVariantByID)
 
-export default router 
+export default router
