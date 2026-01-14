@@ -15,7 +15,7 @@ class CartServices {
             });
             return {
                 success: true,
-                message: "Get all carts successfully",
+                message: "Cart retrieved successfully for the user.",
                 cartID: response?.id,
                 httpStatus: HttpStatus.OK,
             };

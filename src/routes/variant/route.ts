@@ -6,6 +6,6 @@ import ProductVariant from '~/controllers/variants.controller'
 const router = Router() 
 router.get('/' , credentials , verifyRole(["User"]) , ProductVariant.getAllVariants) 
 router.get('/get-by-product/:id' , credentials , verifyRole(["User"]) , ProductVariant.getVariantsByProduct) 
-router.get('/get-by-id' , credentials , verifyRole(["User"]) , ProductVariant.getVariantByID) 
+router.get('/get-by-id/:id' , credentials , verifyRole(["User"]) , ProductVariant.getVariantByID)
 
 export default router 
