@@ -255,6 +255,15 @@ class User {
             .status(HttpStatus.INTERNAL)
             .json({ success: false, message: "Internal Server Error" });
     }
+    static async getAllUsers(req : Request , res : Response) 
+    {
+        const responseData = await UserServices.getAllUsers() 
+        if (responseData)
+            return res.status(responseData.httpStatus).json(responseData);
+        return res
+            .status(HttpStatus.INTERNAL)
+            .json({ success: false, message: "Internal Server Error" });
+    }
 }
 
 export default User;
