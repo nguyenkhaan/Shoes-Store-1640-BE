@@ -17,13 +17,14 @@ async function createOrder(userID: number, data: CreateOrderDTO) {
     }
 
     // Lấy thông tin các variants
-    const variantIDs = data.items.map((item) => item.productVariantID);
+    const variantIDs = [...new Set(...[data.items.map((item) => item.productVariantID)])] 
     const variants = await prisma.productVariant.findMany({
       where: { id: { in: variantIDs } },
       include: {
         product: true,
       },
     });
+  
 
     // Kiểm tra tất cả variants có tồn tại không
     if (variants.length !== variantIDs.length) {
@@ -89,17 +90,12 @@ async function createOrder(userID: number, data: CreateOrderDTO) {
               productVariant: {
                 select: {
                   id: true,
+                  size: true, 
                   product: {
                     select: {
                       id: true,
                       name: true,
                       thumbnail: true,
-                    },
-                  },
-                  size: {
-                    select: {
-                      id: true,
-                      value: true,
                     },
                   },
                   color: {
@@ -171,17 +167,12 @@ async function getOrdersByUser(userID: number) {
             productVariant: {
               select: {
                 id: true,
+                size: true, 
                 product: {
                   select: {
                     id: true,
                     name: true,
                     thumbnail: true,
-                  },
-                },
-                size: {
-                  select: {
-                    id: true,
-                    value: true,
                   },
                 },
                 color: {
@@ -254,17 +245,12 @@ async function getOrderByID(orderID: number, userID?: number) {
             productVariant: {
               select: {
                 id: true,
+                size: true, 
                 product: {
                   select: {
                     id: true,
                     name: true,
                     thumbnail: true,
-                  },
-                },
-                size: {
-                  select: {
-                    id: true,
-                    value: true,
                   },
                 },
                 color: {
@@ -396,13 +382,13 @@ async function updateOrderStatus(orderID: number, status: string) {
     }
 
     // Nếu đơn đã hủy thì không cho đổi trạng thái khác
-    if (existingOrder.status === "cancelled" && status !== "cancelled") {
-      return {
-        success: false,
-        message: "Cannot change status of an already cancelled order",
-        httpStatus: HttpStatus.BAD_REQUEST,
-      };
-    }
+    // if (existingOrder.status === "cancelled" && status !== "cancelled") {
+    //   return {
+    //     success: false,
+    //     message: "Cannot change status of an already cancelled order",
+    //     httpStatus: HttpStatus.BAD_REQUEST,
+    //   };
+    // }
 
     // Xử lý cập nhật trạng thái
     const updatedOrder = await prisma.$transaction(async (tx) => {

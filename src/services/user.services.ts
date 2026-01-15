@@ -34,7 +34,12 @@ class UserServices
             //Assign permission to user 
     
             await assignUserRole(result.id , ["User"])
-    
+            //Tao gio hang cho nguoi dung 
+            await prisma.cart.create({
+                data: {
+                    userID: result.id 
+                }
+            })
             // console.log(' >>> Check thong tin nguoi dung: ' , result)   
             return result
         } 
@@ -217,6 +222,75 @@ class UserServices
             }
         }
     }
+
+    static async getAllUsers() 
+    {
+        try {
+            const users = await prisma.user.findMany({
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true, // Lưu public_id
+                phone: true,
+                address: true,
+                createdAt: true,
+                orders: {
+                  select: {
+                    id: true,
+                    orderItems: {
+                      select: {
+                        quantity: true,
+                        price: true,
+                      },
+                    },
+                  },
+                },
+              },
+            });
+    
+            const formattedUsers = users.map((user) => {
+              const totalOrders = user.orders.length;
+    
+              // Tính tổng tiền đã chi
+              const totalSpent = user.orders.reduce((sumOrders, order) => {
+                const orderTotal = order.orderItems.reduce(
+                  (sumItems, item) => sumItems + Number(item.price) * item.quantity,
+                  0
+                );
+                return sumOrders + orderTotal;
+              }, 0);
+    
+              // Chuyển public_id thành URL
+              const avatarUrl = user.avatar ? Cloudian.getImageUrl(user.avatar) : 'https://www.svgrepo.com/show/452030/avatar-default.svg';
+    
+              return {
+                name: user.name,
+                email: user.email,
+                avatar: avatarUrl,
+                phone: user.phone,
+                address: user.address,
+                totalOrders,
+                totalSpent,
+                createdAt: user.createdAt,
+              };
+            });
+    
+            return {
+              success: true,
+              data: formattedUsers,
+              message: "Get all users successfully",
+              httpStatus: HttpStatus.OK,
+            };
+          } catch (err) {
+            console.error(">>> get all users error:", err);
+            return {
+              success: false,
+              message: "Failed to get users",
+              httpStatus: HttpStatus.INTERNAL,
+            };
+          }
+    }    
 }
 
 export default UserServices

@@ -10,11 +10,11 @@ const router = Router();
 router.get("/", Product.getAllProductsAdmin);
 router.post(
   "/",
-  upload.single("thumbnail"),
-  requireFields(["name", "description", "price", "active", "brandID"]),
+  upload.array("thumbnail"),
+  requireFields(["name", "description", "price", "active", "brandID" , "discount" , "category"]),
   Product.createProduct
 );
-router.put("/:id", upload.single("thumbnail"), Validation.numberIDParam, Product.updateProduct);
+router.put("/:id", upload.array("thumbnail"), Validation.numberIDParam, Product.updateProduct);   ///Chinh sua thanh upload nhieu anh 
 router.delete("/:id", Validation.numberIDParam, Product.deleteProduct);
 
 export default router;

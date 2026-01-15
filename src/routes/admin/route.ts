@@ -9,9 +9,11 @@ import SizeRoute from "~/routes/admin/size/route";
 import ProductRoute from "~/routes/admin/product/route";
 import VariantRoute from "~/routes/admin/variant/route";
 import OrderRoute from "~/routes/admin/order/route";
-import Admin from "~/controllers/admin.controller";
+import Admin from "~/controllers/admin.controller"; 
+import UserRoute from "~/routes/admin/user/route";
+import Dashboard from "~/routes/admin/dashboard/route"
 //Public route
-router.get("/forgot-password", Admin.forgotPassword); //Khi goi cai nay thi no se tien hanh gui mail de reset password. Dang test
+// router.get("/forgot-password", Admin.forgotPassword); //Khi goi cai nay thi no se tien hanh gui mail de reset password. Dang test
 
 // Dev bypass auth
 router.use(devBypassAuth, (req, res, next) => {
@@ -26,5 +28,6 @@ router.use("/sizes", credentials, verifyRole(["Admin"]), SizeRoute);
 router.use("/products", credentials, verifyRole(["Admin"]), ProductRoute);
 router.use("/variants", credentials, verifyRole(["Admin"]), VariantRoute);
 router.use("/orders", credentials, verifyRole(["Admin"]), OrderRoute);
-
+router.use("/user" , credentials ,  verifyRole(["Admin"]) , UserRoute)
+router.use("/dashboard" , credentials ,  verifyRole(["Admin"]) , Dashboard)
 export default router;

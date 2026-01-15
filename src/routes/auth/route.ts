@@ -34,7 +34,8 @@ router.get(
 );
 router.post(
   "/logout",
-  //   credentials,
+  credentials,
+  verifyRole(["User"]), //Bo sung them cai nay vao 
   Auth.logout
 );
 router.post("/login-google", requireFields(["code"]), Auth.loginGoogle);

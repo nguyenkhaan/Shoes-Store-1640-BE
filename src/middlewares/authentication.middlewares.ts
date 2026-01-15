@@ -20,9 +20,10 @@ const credentials = (req: Request, res: Response, next: NextFunction) => {
     return res.status(HttpStatus.FORBIDDEN).json({ success: false, message: "Token is invalid" });
   //Thuc hien gan lai bang req.data -> Route nao ma su dung cai nay thi phai dat lai du lieu la req.data nhe
   try {
+    // console.log('>> Token: ' , token) 
     const payload = jwt.verify(token, ENV.ACCESS_TOKEN_SECRET as string); //Tien hanh authentication Refresh token
     //Luc nay ta se dua danh tinh nguoi dung vao 1 truogn req moi, cac truong du lieu van nam trong req.body
-
+    // console.log(payload)
     req.user = payload; //Khai bao trong thu muc types moi duoc do, req.user.userID
     next(); //Next, number 1 Battle
   } catch (err) {

@@ -34,6 +34,9 @@ function createVerifyToken(id: number , email: string)
 function encodeToken(payload: object) //Nhan vao du lieu va dong goi du lieu do thanh jwt token 
 {  //Ben login nho them roles do 
     //Tien hanh tao token va gui lai cho nguoi dung ?
+    if (!ENV.ACCESS_TOKEN_SECRET || !ENV.REFRESH_TOKEN_SECRET) {
+        throw new Error("JWT secret keys are not defined");
+      }      
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET;
     const refresh_secret_key = ENV.REFRESH_TOKEN_SECRET;
     const access_token = jwt.sign({...payload , purpose : 'login'}, access_secret_key as string, {
@@ -54,11 +57,11 @@ function makeToken(payload :object , purpose : TokenPurpose , secret_key: string
 function makeAccessToken(payload : object) 
 {
     const access_secret_key = ENV.ACCESS_TOKEN_SECRET as string 
-    // const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
-    //     expiresIn: '1d'
-    //     //24 * 3600 * 3 
-    // }) 
-    const access_token = makeToken(payload , 'login' , access_secret_key , 24 * 3600 * 3)
+    const access_token = jwt.sign({...payload , purpose : 'login'} , access_secret_key , {
+        expiresIn: '1d'
+        //24 * 3600 * 3 
+    }) 
+    // const access_token = makeToken(payload , 'login' , access_secret_key , 24 * 3600 * 3)
     return access_token
 }
 function makeResetPasswordToken(payload : object) 

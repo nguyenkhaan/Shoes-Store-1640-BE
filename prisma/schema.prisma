@@ -34,9 +34,21 @@ model User {
 
 //Mot nguoi dung co nhieu gio hang, userID, productID, id, userID , userId
 model Cart {
-  id     Int  @id @default(autoincrement())
-  userID Int  @unique
-  user   User @relation(fields: [userID], references: [id])
+  id           Int           @id @default(autoincrement())
+  userID       Int           @unique
+  user         User          @relation(fields: [userID], references: [id])
+  cartProducts CartProduct[]
+}
+
+model CartProduct {
+  id               Int            @id @default(autoincrement())
+  quantity         Int            @default(1)
+  cart             Cart           @relation(fields: [cartID], references: [id])
+  cartID           Int
+  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
+  productVariantID Int
+
+  @@unique([cartID, productVariantID])
 }
 
 model Product {
@@ -45,13 +57,13 @@ model Product {
   description     String
   price           Decimal
   active          Boolean
-  thumbnail       String           @default("https://static.thenounproject.com/png/5191452-200.png")
+  thumbnail       Json
   brand           Brand            @relation(fields: [brandID], references: [id])
   brandID         Int
   productVariants ProductVariant[]
   //category String ["trending","popular","freeship"], discount 
-  category        String //Moi bo sung 
-  discount        Decimal //Moi bo sung 
+  category        Json
+  discount        Decimal //Chinh lai thanh default(0), nho chinh lai 
 }
 
 model Order {
@@ -83,15 +95,17 @@ model OrderItem {
 }
 
 model ProductVariant {
-  id         Int         @id @default(autoincrement())
-  product    Product     @relation(fields: [productID], references: [id])
-  productID  Int
-  size       Size        @relation(fields: [sizeID], references: [id])
-  sizeID     Int
-  color      Color       @relation(fields: [colorID], references: [id])
-  colorID    Int
-  quantity   Int
-  orderItems OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
+  id           Int           @id @default(autoincrement())
+  product      Product       @relation(fields: [productID], references: [id])
+  productID    Int
+  color        Color         @relation(fields: [colorID], references: [id])
+  colorID      Int
+  quantity     Int
+  orderItems   OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
+  size         Int           @default(0)
+  cartProducts CartProduct[]
+
+  @@unique([productID, size, colorID])
 }
 
 model Brand {
@@ -104,12 +118,6 @@ model Color {
   id              Int              @id @default(autoincrement())
   name            String
   hex             String
-  productVariants ProductVariant[]
-}
-
-model Size {
-  id              Int              @id @default(autoincrement())
-  value           Int
   productVariants ProductVariant[]
 }
 

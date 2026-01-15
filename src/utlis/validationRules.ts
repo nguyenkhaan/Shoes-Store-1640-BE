@@ -8,11 +8,9 @@ class Rule {  //GPT han hanh tai tro chuong trinh any
   
     // Kiểm tra password
     static password(password: string): boolean {
-      // Ít nhất 8 ký tự, có ít nhất 1 chữ và 1 số
-      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      const regex = /^(?=.*[A-Z])(?=.*\d).{12,}$/;
       return regex.test(password);
     }
-  
     // Optional: thêm rule tên đầy đủ (chỉ chữ, space)
     static fullName(name: string): boolean {
       const regex = /^[A-Za-z\s]+$/;

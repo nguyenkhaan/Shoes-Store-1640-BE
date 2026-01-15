@@ -8,7 +8,13 @@ class Order {
   static async createOrder(req: Request, res: Response) {
     const userID = Number((req.user as JwtPayload).userID);
     const { shippingAddress, paymentMethod, items } = req.body;
-
+    //Validate payment method 
+    if (paymentMethod != "COD" && paymentMethod != "credit_card") {
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        success: false, 
+        message: "Payment method must be COD or credit_card"
+      }) 
+    }
     const parsedItems = Array.isArray(items)
       ? items.map((item: any) => ({
           productVariantID: Number(item.productVariantID),

@@ -95,7 +95,7 @@ async function updateColorByID(id: number, name: string, hex?: string) {
     const updatedColor = await prisma.color.update({
       where: { id },
       data: {
-        name,
+        name : name || existingColor.name,
         hex: hex || existingColor.hex,
       },
     });

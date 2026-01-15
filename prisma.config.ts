@@ -10,6 +10,6 @@ export default defineConfig({
     seed: "ts-node prisma/seed.ts"   //Them dong  nay vao de tien hanh seed du lieu 
   },
   datasource: {
-    url: process.env["DATABASE_URL"] as string, 
+    url: "mysql://cloudian:cloud@localhost:3306/SHOESSTORE" 
   },
 });
