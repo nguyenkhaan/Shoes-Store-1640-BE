@@ -36,9 +36,9 @@ async function registerUser(data: any) {
         if (existingUser && !existingUser.verify) {
             const token = await createVerifyToken(existingUser.id, email);
             console.log('>>> Verify TOken: ' , token) 
-            const content = await renderEmail("verifyAccount", {
+            const content = await renderEmail("verifyAccountTemp", {
                 email,
-                verifyLink: `${ENV.FE}/verify?token=${token}`,  //chinh sua lai route 
+                confirmLink: `${ENV.FE}/login?token=${token}`,  //chinh sua lai route 
                 expireMinutes: 5,
             });
 

@@ -152,7 +152,7 @@ class CartServices {
   }
 
   // Lưu sản phẩm (productVariant) vào cart
-  static async saveProductToCart(userID: number, productVariantID: number) {
+  static async saveProductToCart(userID: number, productVariantID: number , quantity : number) {
     try {
       const cart = await prisma.cart.findFirst({
         where: { userID },
@@ -179,10 +179,10 @@ class CartServices {
           httpStatus: HttpStatus.BAD_REQUEST,
         };
       }
-
+      console.log(variant) 
       await prisma.cartProduct.upsert({
         where: { cartID_productVariantID: { cartID: cart.id, productVariantID } },
-        update: { quantity: 1 }, // nếu muốn tăng số lượng thì dùng { increment: 1 }
+        update: { quantity }, // nếu muốn tăng số lượng thì dùng { increment: 1 }
         create: { cartID: cart.id, productVariantID, quantity: 1 },
       });
 
