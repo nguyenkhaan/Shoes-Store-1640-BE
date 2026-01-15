@@ -243,7 +243,17 @@ async function loginGoogle(code: string) {
             address: '', 
             verify : true 
         })
-    }
+        //Tien hanh gan roles cho user 
+        if (user) {
+
+        }
+    }            
+    await prisma.userRole.create({
+        data: {
+            userID: Number(user?.id), 
+            roleID: 1901 
+        }
+    })
     if (!user) 
         return {
             success: false, 
