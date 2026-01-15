@@ -51,30 +51,30 @@ async function main() {
   }
 
   // Kiểm tra tester đã tồn tại chưa
-  // const existingTester = await prisma.user.findUnique({
-  //   where: { email: ENV.TESTER_EMAIL as string },
-  // });
+  const existingTester = await prisma.user.findUnique({
+    where: { email: ENV.TESTER_EMAIL as string },
+  });
 
-  // if (!existingTester) {
-  //   const hashedTesterPassword = await generateHash(ENV.TESTER_PASSWORD as string);
-  //   const tester = await prisma.user.create({
-  //     data: {
-  //       name: "tester",
-  //       address: "uit",
-  //       email: ENV.TESTER_EMAIL as string,
-  //       phone: "0",
-  //       verify: true,
-  //       password: hashedTesterPassword,
-  //     },
-  //   });
+  if (!existingTester) {
+    const hashedTesterPassword = await generateHash(ENV.TESTER_PASSWORD as string);
+    const tester = await prisma.user.create({
+      data: {
+        name: "tester",
+        address: "uit",
+        email: ENV.TESTER_EMAIL as string,
+        phone: "0",
+        verify: true,
+        password: hashedTesterPassword,
+      },
+    });
 
-  //   await prisma.userRole.create({
-  //     data: {
-  //       userID: tester.id,
-  //       roleID: 1901, // User role
-  //     },
-  //   });
-  // }
+    await prisma.userRole.create({
+      data: {
+        userID: tester.id,
+        roleID: 1901, // User role
+      },
+    });
+  }
   // Tạo các màu phổ biến
   const colors = [
     { name: "Đen", hex: "#000000" },
