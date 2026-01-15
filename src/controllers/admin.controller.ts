@@ -43,5 +43,15 @@ class Admin
             .status(HttpStatus.INTERNAL)
             .json({ success: false, message: "Internal Server Error" });
     }
+
+    static async getWeeklyRevenue(req : Request , res : Response)
+    {
+        const responseData = await AdminServices.getWeeklyRevenue() 
+        if (responseData)
+            return res.status(responseData.httpStatus).json(responseData);
+        return res
+            .status(HttpStatus.INTERNAL)
+            .json({ success: false, message: "Internal Server Error" });
+    }
 }
 export default Admin 

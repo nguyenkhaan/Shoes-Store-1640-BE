@@ -6,5 +6,6 @@ import Admin from "~/controllers/admin.controller";
 const router = Router();
 
 router.get('/' , Admin.getAdminDashboard)
+router.get('/weekly-revenue' , Admin.getWeeklyRevenue)
 
 export default router;
