@@ -62,7 +62,7 @@ async function registerUser(data: any) {
         if (pendingUser) {
             const token = await createVerifyToken(pendingUser.id, email);
             console.log('Verify token: ' , token) 
-            const content = await renderEmail("verifyAccount", {
+            const content = await renderEmail("verifyAccountTemp", {
                 email,
                 verifyLink: `${ENV.FE}/verify-email?token=${token}`,
                 expireMinutes: 5,
