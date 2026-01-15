@@ -3,6 +3,7 @@ import sendEmail from "~/utlis/email";
 import renderEmail from "~/utlis/renderEmail";
 import HttpStatus from "~/utlis/statusMap";
 import { ENV } from "~/configs/env.config";
+import AdminServices from "~/services/admin.services";
 class Admin 
 {
     // static async createProduct(req : Request , res : Response) //Dung de tao moi 1 san pham 
@@ -33,9 +34,14 @@ class Admin
             message : "Error while trying to send email. Please try again later"
         })
     }
-    static async resetPassword(req : Request , res : Response) 
+    static async getAdminDashboard(req : Request , res : Response) 
     {
-
+        const responseData = await AdminServices.getAdminDashboard() 
+        if (responseData)
+            return res.status(responseData.httpStatus).json(responseData);
+        return res
+            .status(HttpStatus.INTERNAL)
+            .json({ success: false, message: "Internal Server Error" });
     }
 }
 export default Admin 
