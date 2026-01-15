@@ -41,14 +41,14 @@ model Cart {
 }
 
 model CartProduct {
-  id        Int     @id @default(autoincrement())
-  quantity  Int     @default(1)
-  cart      Cart    @relation(fields: [cartID], references: [id])
-  cartID    Int
-  product   Product @relation(fields: [productID], references: [id])
-  productID Int
+  id               Int            @id @default(autoincrement())
+  quantity         Int            @default(1)
+  cart             Cart           @relation(fields: [cartID], references: [id])
+  cartID           Int
+  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
+  productVariantID Int
 
-  @@unique([cartID, productID])
+  @@unique([cartID, productVariantID])
 }
 
 model Product {
@@ -63,8 +63,7 @@ model Product {
   productVariants ProductVariant[]
   //category String ["trending","popular","freeship"], discount 
   category        Json
-  discount        Decimal //Moi bo sung 
-  cartProducts    CartProduct[]
+  discount        Decimal //Chinh lai thanh default(0), nho chinh lai 
 }
 
 model Order {
@@ -96,14 +95,15 @@ model OrderItem {
 }
 
 model ProductVariant {
-  id         Int         @id @default(autoincrement())
-  product    Product     @relation(fields: [productID], references: [id])
-  productID  Int
-  color      Color       @relation(fields: [colorID], references: [id])
-  colorID    Int
-  quantity   Int
-  orderItems OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
-  size       Int         @default(0)
+  id           Int           @id @default(autoincrement())
+  product      Product       @relation(fields: [productID], references: [id])
+  productID    Int
+  color        Color         @relation(fields: [colorID], references: [id])
+  colorID      Int
+  quantity     Int
+  orderItems   OrderItem[] //LowPrice (true/False) , Freeship (True/False) , BestSold(True/False)prod
+  size         Int           @default(0)
+  cartProducts CartProduct[]
 
   @@unique([productID, size, colorID])
 }

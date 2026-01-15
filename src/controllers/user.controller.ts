@@ -34,7 +34,7 @@ class User {
 
         const content = await renderEmail('changePassword', {
             to: email,
-            resetLink: `${ENV.FE}/reset-password?token=${token}`,
+            resetLink: `${ENV.FE}/verify?token=${token}`,
             expireMinutes: 5
         });
 
@@ -224,7 +224,7 @@ class User {
         const content = await renderEmail('changeEmail' , {
             to: email,
             newEmail: email, 
-            confirmLink: `${ENV.FE}/reset-password?token=${token}`,
+            confirmLink: `${ENV.FE}/verify?token=${token}`,
             expireMinutes: 5
         })
 

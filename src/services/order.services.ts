@@ -382,13 +382,13 @@ async function updateOrderStatus(orderID: number, status: string) {
     }
 
     // Nếu đơn đã hủy thì không cho đổi trạng thái khác
-    if (existingOrder.status === "cancelled" && status !== "cancelled") {
-      return {
-        success: false,
-        message: "Cannot change status of an already cancelled order",
-        httpStatus: HttpStatus.BAD_REQUEST,
-      };
-    }
+    // if (existingOrder.status === "cancelled" && status !== "cancelled") {
+    //   return {
+    //     success: false,
+    //     message: "Cannot change status of an already cancelled order",
+    //     httpStatus: HttpStatus.BAD_REQUEST,
+    //   };
+    // }
 
     // Xử lý cập nhật trạng thái
     const updatedOrder = await prisma.$transaction(async (tx) => {

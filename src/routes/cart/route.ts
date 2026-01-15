@@ -6,7 +6,7 @@ import { checkUserStatusByID } from "~/middlewares/active.middlewares"; //Su dun
 import { verifyRole } from "~/middlewares/authorization.middlewares";
 import { requireFields } from "~/middlewares/requiredField.middlewares";
 const router = Router();
-router.post('/add-product' , credentials , verifyRole(["User"]) , requireFields(["productID"]) , Cart.saveProduct)
+router.post('/add-product' , credentials , verifyRole(["User"]) , requireFields(["productVariantID"]) , Cart.saveProduct)
 router.delete('/remove-product/:id' , credentials , verifyRole(["User"]) , Cart.removeProductFromCart)   //drop cart by id 
 router.get('/all-products' , credentials , verifyRole(["User"]) , Cart.getProductInCarts)
 router.delete(

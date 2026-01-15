@@ -38,7 +38,7 @@ async function registerUser(data: any) {
             console.log('>>> Verify TOken: ' , token) 
             const content = await renderEmail("verifyAccount", {
                 email,
-                verifyLink: `${ENV.FE}/verify-email?token=${token}`,
+                verifyLink: `${ENV.FE}/verify?token=${token}`,  //chinh sua lai route 
                 expireMinutes: 5,
             });
 
@@ -61,7 +61,7 @@ async function registerUser(data: any) {
 
         if (pendingUser) {
             const token = await createVerifyToken(pendingUser.id, email);
-
+            console.log('Verify token: ' , token) 
             const content = await renderEmail("verifyAccount", {
                 email,
                 verifyLink: `${ENV.FE}/verify-email?token=${token}`,

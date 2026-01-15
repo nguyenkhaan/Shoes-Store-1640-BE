@@ -39,8 +39,8 @@ class Cart
     static async saveProduct(req : Request , res : Response) 
     {
         const userID = Number((req.user as JwtPayload).userID) 
-        const { productID } = req.body 
-        const responseData = await CartServices.saveProductToCart(userID , Number(productID)) 
+        const { productVariantID } = req.body 
+        const responseData = await CartServices.saveProductToCart(userID , Number(productVariantID)) 
         if (responseData) 
             return res.status(responseData.httpStatus).json(responseData)
         return res

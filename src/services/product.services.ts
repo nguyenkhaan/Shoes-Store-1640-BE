@@ -73,7 +73,7 @@ async function getAllProducts() {
   try {
     const products = await prisma.product.findMany({
       where: {
-        active: true,
+        active: true,  //Chinh sua lai thanh active true || false 
       },
       select: {
         id: true,
